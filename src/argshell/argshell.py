@@ -21,7 +21,8 @@ class ArgShellParser(argparse.ArgumentParser):
 
     def parse_args(self, *args, **kwargs) -> Namespace:
         """Just making the type checker hush."""
-        return super().parse_args(*args, **kwargs)
+        parsed_args: Namespace = super().parse_args(*args, **kwargs)
+        return parsed_args
 
 
 class ArgShell(cmd.Cmd):
