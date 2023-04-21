@@ -44,7 +44,7 @@ def with_parser(
     :param post_parsers: An optional list of functions to execute where each function takes an argshell.Namespace instance and returns an argshell.Namespace instance.
         Functions are executed in the order they are supplied.
 
-    >>> def get_args() -> argshell.ArgShellParser:
+    >>> def get_parser() -> argshell.ArgShellParser:
     >>>     parser = argshell.ArgShellParser()
     >>>     parser.add_argument("names", type=str, nargs="*", help="A list of first and last names to print.")
     >>>     parser.add_argument("-i", "--initials", action="store_true", help="Print the initials instead of the full name.")
@@ -65,7 +65,7 @@ def with_parser(
     >>>     intro = "Entering nameshell..."
     >>>     prompt = "nameshell>"
     >>>
-    >>>     @with_parser(get_args, [capitalize_names, names_list_to_tuples])
+    >>>     @with_parser(get_parser, [capitalize_names, names_list_to_tuples])
     >>>     def do_printnames(self, args: argshell.Namespace):
     >>>         print(*[f"{name[0]} {name[1]}" for name in args.names], sep="\\n")
     >>>
