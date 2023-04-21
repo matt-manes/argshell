@@ -91,8 +91,12 @@ def with_parser(
         @wraps(func)
         def inner(self: Any, command: str) -> Any:
             args = parser().parse_args(shlex.split(command))
+            # Don't execute function, only print parser help
+            if "-h" in command or "--help" in command:
+                return None
             for post_parser in post_parsers:
                 args = post_parser(args)
+
             return func(self, args)
 
         return inner
