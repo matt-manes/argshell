@@ -43,7 +43,7 @@ def with_parser(
     :param parser: A function that creates an argshell.ArgShellParser instance, adds arguments to it, and returns the parser.
 
     :param post_parsers: An optional list of functions to execute where each function takes an argshell.Namespace instance and returns an argshell.Namespace instance.
-        Functions are executed in the order they are supplied.
+        'post_parser' functions are executed in the order they are supplied.
 
     >>> def get_parser() -> argshell.ArgShellParser:
     >>>     parser = argshell.ArgShellParser()
