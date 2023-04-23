@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "argshell"
 description = "Integrates the argparse and cmd modules."
-version = "0.0.0"
+version = "1.0.0"
 requires-python = ">=3.10"
 dependencies = ["pytest"]
 readme = "README.md"
