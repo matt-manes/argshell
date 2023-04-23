@@ -48,8 +48,11 @@ class ArgShell(cmd.Cmd):
                         self.stdout.write("%s\n" % str(doc))
                     # Check for decorator and call decorated function with "--help"
                     if hasattr(func, "__wrapped__"):
-                        self.stdout.write(f"Parser help for {func.__name__}:\n")
-                        func("-h")
+                        self.stdout.write(
+                            f"Parser help for {func.__name__.replace('do_','')}:\n"
+                        )
+                        func("--help")
+                    if doc or hasattr(func, "__wrapped__"):
                         return
                 except AttributeError:
                     pass
