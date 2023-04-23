@@ -177,7 +177,13 @@ def with_parser(
                 # On parser error, print help and skip post_parser and func execution
                 print(e)
                 command = "--help"
-                args = parser().parse_args(shlex.split(command))
+                # Parsers with required positional arguments will crash shell
+                # without wrapping this in a try/except
+                try:
+                    args = parser().parse_args(shlex.split(command))
+                except Exception as e:
+                    ...
+                return None
             # Don't execute function, only print parser help
             if "-h" in command or "--help" in command:
                 return None
