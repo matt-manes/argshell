@@ -19,6 +19,9 @@ class ArgShellParser(argparse.ArgumentParser):
         if message:
             self._print_message(message, sys.stderr)
 
+    def error(self, message):
+        raise Exception(f"prog: {self.prog}, message: {message}")
+
     def parse_args(self, *args, **kwargs) -> Namespace:
         """Just making the type checker hush."""
         parsed_args: Namespace = super().parse_args(*args, **kwargs)
@@ -145,7 +148,13 @@ def with_parser(
     ) -> Callable[[Any, str], Any]:
         @wraps(func)
         def inner(self: Any, command: str) -> Any:
-            args = parser().parse_args(shlex.split(command))
+            try:
+                args = parser().parse_args(shlex.split(command))
+            except Exception as e:
+                # On parser error, print help and skip post_parser and func execution
+                print(e)
+                command = "--help"
+                args = parser().parse_args(shlex.split(command))
             # Don't execute function, only print parser help
             if "-h" in command or "--help" in command:
                 return None
