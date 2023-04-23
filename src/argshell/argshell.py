@@ -7,12 +7,34 @@ from typing import Any, Callable
 
 
 class Namespace(argparse.Namespace):
-    """Wrapping argparse.Namesapce for convenience."""
+    """Simple object for storing attributes.
+
+    Implements equality by attribute names and values, and provides a simple string representation."""
 
 
 class ArgShellParser(argparse.ArgumentParser):
-    """Wrapping argparse.ArgumentParser for convenience
-    and to prevent exit on '-h/--help' switch."""
+    """***Overrides exit, error, and parse_args methods***
+
+    Object for parsing command line strings into Python objects.
+
+    Keyword Arguments:
+        - prog -- The name of the program (default:
+            ``os.path.basename(sys.argv[0])``)
+        - usage -- A usage message (default: auto-generated from arguments)
+        - description -- A description of what the program does
+        - epilog -- Text following the argument descriptions
+        - parents -- Parsers whose arguments should be copied into this one
+        - formatter_class -- HelpFormatter class for printing help messages
+        - prefix_chars -- Characters that prefix optional arguments
+        - fromfile_prefix_chars -- Characters that prefix files containing
+            additional arguments
+        - argument_default -- The default value for all arguments
+        - conflict_handler -- String indicating how to handle conflicts
+        - add_help -- Add a -h/-help option
+        - allow_abbrev -- Allow long options to be abbreviated unambiguously
+        - exit_on_error -- Determines whether or not ArgumentParser exits with
+            error info when an error occurs
+    """
 
     def exit(self, status=0, message=None):
         """Override to prevent shell exit when passing -h/--help switches."""
@@ -23,17 +45,18 @@ class ArgShellParser(argparse.ArgumentParser):
         raise Exception(f"prog: {self.prog}, message: {message}")
 
     def parse_args(self, *args, **kwargs) -> Namespace:
-        """Just making the type checker hush."""
         parsed_args: Namespace = super().parse_args(*args, **kwargs)
         return parsed_args
 
 
 class ArgShell(cmd.Cmd):
+    """Subclass this to create custom ArgShells."""
+
     intro = "Entering argshell..."
     prompt = "argshell>"
 
     def do_quit(self, command: str):
-        """Quit shell"""
+        """Quit shell."""
         return True
 
     def do_help(self, arg):
