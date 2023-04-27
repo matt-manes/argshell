@@ -80,6 +80,7 @@ class ArgShell(cmd.Cmd):
                         func("--help")
                     if doc or hasattr(func, "__wrapped__"):
                         return
+                    ######################### end modification #########################
                 except AttributeError:
                     pass
                 self.stdout.write("%s\n" % str(self.nohelp % (arg,)))
@@ -175,14 +176,13 @@ def with_parser(
                 args = parser().parse_args(shlex.split(command))
             except Exception as e:
                 # On parser error, print help and skip post_parser and func execution
-                print(e)
-                command = "--help"
-                # Parsers with required positional arguments will crash shell
-                # without wrapping this in a try/except
-                try:
-                    args = parser().parse_args(shlex.split(command))
-                except Exception as e:
-                    ...
+                if "the following arguments are required" not in str(e):
+                    print(f"ERROR: {e}")
+                if "-h" not in command and "--help" not in command:
+                    try:
+                        args = parser().parse_args(["--help"])
+                    except Exception as e:
+                        pass
                 return None
             # Don't execute function, only print parser help
             if "-h" in command or "--help" in command:
