@@ -2,6 +2,7 @@ import argparse
 import cmd
 import shlex
 import sys
+import traceback
 from functools import wraps
 from typing import Any, Callable
 
@@ -72,6 +73,7 @@ class ArgShell(cmd.Cmd):
                     doc = func.__doc__
                     if doc:
                         self.stdout.write("%s\n" % str(doc))
+                    # =========================Modification start=========================
                     # Check for decorator and call decorated function with "--help"
                     if hasattr(func, "__wrapped__"):
                         self.stdout.write(
@@ -80,7 +82,7 @@ class ArgShell(cmd.Cmd):
                         func("--help")
                     if doc or hasattr(func, "__wrapped__"):
                         return
-                    ######################### end modification #########################
+                    # =========================Modification stop=========================
                 except AttributeError:
                     pass
                 self.stdout.write("%s\n" % str(self.nohelp % (arg,)))
@@ -114,6 +116,64 @@ class ArgShell(cmd.Cmd):
             self.print_topics(self.doc_header, cmds_doc, 15, 80)
             self.print_topics(self.misc_header, sorted(topics), 15, 80)
             self.print_topics(self.undoc_header, cmds_undoc, 15, 80)
+
+    def cmdloop(self, intro=None):
+        """Repeatedly issue a prompt, accept input, parse an initial prefix
+        off the received input, and dispatch to action methods, passing them
+        the remainder of the line as argument.
+
+        """
+
+        self.preloop()
+        if self.use_rawinput and self.completekey:
+            try:
+                import readline
+
+                self.old_completer = readline.get_completer()  # type: ignore
+                readline.set_completer(self.complete)  # type: ignore
+                readline.parse_and_bind(self.completekey + ": complete")  # type: ignore
+            except ImportError:
+                pass
+        try:
+            if intro is not None:
+                self.intro = intro
+            if self.intro:
+                self.stdout.write(str(self.intro) + "\n")
+            stop = None
+            while not stop:
+                if self.cmdqueue:
+                    line = self.cmdqueue.pop(0)
+                else:
+                    if self.use_rawinput:
+                        try:
+                            line = input(self.prompt)
+                        except EOFError:
+                            line = "EOF"
+                    else:
+                        self.stdout.write(self.prompt)
+                        self.stdout.flush()
+                        line = self.stdin.readline()
+                        if not len(line):
+                            line = "EOF"
+                        else:
+                            line = line.rstrip("\r\n")
+                # ===========Modification start===========
+                try:
+                    line = self.precmd(line)
+                    stop = self.onecmd(line)
+                    stop = self.postcmd(stop, line)
+                except Exception as e:
+                    traceback.print_exc()
+                # ===========Modification stop===========
+            self.postloop()
+        finally:
+            if self.use_rawinput and self.completekey:
+                try:
+                    import readline
+
+                    readline.set_completer(self.old_completer)  # type: ignore
+                except ImportError:
+                    pass
 
 
 def with_parser(
