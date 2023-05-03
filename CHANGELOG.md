@@ -1,6 +1,13 @@
 # Changelog
 
-## 1.0.0 (2023-04-27)
+## 1.2.0 (2023-05-02)
+
+#### New Features
+
+* add do_sys command to built in commands
+
+
+## v1.1.0 (2023-04-27)
 
 #### Fixes
 
@@ -8,6 +15,9 @@
 #### Performance improvements
 
 * override cmdloop so shell doesn't exit on exception
+#### Others
+
+* build v1.1.0
 
 
 ## v1.0.0 (2023-04-23)
@@ -30,6 +40,7 @@
 * update docstrings
 #### Others
 
+* test build
 * build v1.0.0
 * update with_parser doc string
 
