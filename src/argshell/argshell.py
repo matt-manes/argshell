@@ -1,5 +1,6 @@
 import argparse
 import cmd
+import os
 import shlex
 import sys
 import traceback
@@ -59,6 +60,10 @@ class ArgShell(cmd.Cmd):
     def do_quit(self, command: str):
         """Quit shell."""
         return True
+
+    def do_sys(self, command: str):
+        """Execute command with `os.system()`."""
+        os.system(command)
 
     def do_help(self, arg):
         """List available commands with "help" or detailed help with "help cmd".
