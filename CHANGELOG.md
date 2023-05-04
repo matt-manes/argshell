@@ -1,10 +1,21 @@
 # Changelog
 
-## 1.2.0 (2023-05-02)
+## 1.3.0 (2023-05-03)
+
+#### New Features
+
+* override emptyline so previous command isn't repeated
+
+
+## v1.2.0 (2023-05-02)
 
 #### New Features
 
 * add do_sys command to built in commands
+#### Others
+
+* build v1.2.0
+* update changelog
 
 
 ## v1.1.0 (2023-04-27)
