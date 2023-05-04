@@ -180,6 +180,9 @@ class ArgShell(cmd.Cmd):
                 except ImportError:
                     pass
 
+    def emptyline(self):
+        ...
+
 
 def with_parser(
     parser: Callable[..., ArgShellParser],
