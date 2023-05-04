@@ -66,6 +66,9 @@
                         <li>
                                 <a class="function" href="#ArgShell.cmdloop">cmdloop</a>
                         </li>
+                        <li>
+                                <a class="function" href="#ArgShell.emptyline">emptyline</a>
+                        </li>
                 </ul>
 
             </li>
@@ -275,86 +278,89 @@
 </span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>                <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
 </span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>                    <span class="k">pass</span>
 </span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a>
-</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a>
-</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a><span class="k">def</span> <span class="nf">with_parser</span><span class="p">(</span>
-</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a>    <span class="n">parser</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">ArgShellParser</span><span class="p">],</span>
-</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a>    <span class="n">post_parsers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Namespace</span><span class="p">],</span> <span class="n">Namespace</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[],</span>
-</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Namespace</span><span class="p">],</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]:</span>
-</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a>    <span class="sd">&quot;&quot;&quot;Decorate a &#39;do_*&#39; function in an argshell.ArgShell class with this function to pass an argshell.Namespace object to the decorated function instead of a string.</span>
-</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a>
-</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a><span class="sd">    :param parser: A function that creates an argshell.ArgShellParser instance, adds arguments to it, and returns the parser.</span>
-</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a>
-</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a><span class="sd">    :param post_parsers: An optional list of functions to execute where each function takes an argshell.Namespace instance and returns an argshell.Namespace instance.</span>
-</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a><span class="sd">        &#39;post_parser&#39; functions are executed in the order they are supplied.</span>
+</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a>    <span class="k">def</span> <span class="nf">emptyline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a>        <span class="o">...</span>
+</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a>
+</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a>
+</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a><span class="k">def</span> <span class="nf">with_parser</span><span class="p">(</span>
+</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a>    <span class="n">parser</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">ArgShellParser</span><span class="p">],</span>
+</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a>    <span class="n">post_parsers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Namespace</span><span class="p">],</span> <span class="n">Namespace</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[],</span>
+</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Namespace</span><span class="p">],</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]:</span>
+</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a>    <span class="sd">&quot;&quot;&quot;Decorate a &#39;do_*&#39; function in an argshell.ArgShell class with this function to pass an argshell.Namespace object to the decorated function instead of a string.</span>
+</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a>
+</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a><span class="sd">    :param parser: A function that creates an argshell.ArgShellParser instance, adds arguments to it, and returns the parser.</span>
 </span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a>
-</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a><span class="sd">    &gt;&gt;&gt; def get_parser() -&gt; argshell.ArgShellParser:</span>
-</span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a><span class="sd">    &gt;&gt;&gt;     parser = argshell.ArgShellParser()</span>
-</span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a><span class="sd">    &gt;&gt;&gt;     parser.add_argument(&quot;names&quot;, type=str, nargs=&quot;*&quot;, help=&quot;A list of first and last names to print.&quot;)</span>
-</span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a><span class="sd">    &gt;&gt;&gt;     parser.add_argument(&quot;-i&quot;, &quot;--initials&quot;, action=&quot;store_true&quot;, help=&quot;Print the initials instead of the full name.&quot;)</span>
-</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a><span class="sd">    &gt;&gt;&gt;     return parser</span>
-</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a><span class="sd">    &gt;&gt;&gt;</span>
-</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a><span class="sd">    &gt;&gt;&gt; # Convert list of first and last names to a list of tuples</span>
-</span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a><span class="sd">    &gt;&gt;&gt; def names_list_to_tuples(args: argshell.Namespace) -&gt; argshell.Namespace:</span>
-</span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a><span class="sd">    &gt;&gt;&gt;     args.names = [(first, last) for first, last in zip(args.names[::2], args.names[1::2])]</span>
-</span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a><span class="sd">    &gt;&gt;&gt;     if args.initials:</span>
-</span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a><span class="sd">    &gt;&gt;&gt;         args.names = [(name[0][0], name[1][0]) for name in args.names]</span>
-</span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a><span class="sd">    &gt;&gt;&gt;     return args</span>
-</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a><span class="sd">    &gt;&gt;&gt;</span>
-</span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a><span class="sd">    &gt;&gt;&gt; def capitalize_names(args: argshell.Namespace) -&gt; argshell.Namespace:</span>
-</span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a><span class="sd">    &gt;&gt;&gt;     args.names = [name.capitalize() for name in args.names]</span>
-</span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a><span class="sd">    &gt;&gt;&gt;     return args</span>
-</span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a><span class="sd">    &gt;&gt;&gt;</span>
-</span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a><span class="sd">    &gt;&gt;&gt; class NameShell(ArgShell):</span>
-</span><span id="L-213"><a href="#L-213"><span class="linenos">213</span></a><span class="sd">    &gt;&gt;&gt;     intro = &quot;Entering nameshell...&quot;</span>
-</span><span id="L-214"><a href="#L-214"><span class="linenos">214</span></a><span class="sd">    &gt;&gt;&gt;     prompt = &quot;nameshell&gt;&quot;</span>
-</span><span id="L-215"><a href="#L-215"><span class="linenos">215</span></a><span class="sd">    &gt;&gt;&gt;</span>
-</span><span id="L-216"><a href="#L-216"><span class="linenos">216</span></a><span class="sd">    &gt;&gt;&gt;     @with_parser(get_parser, [capitalize_names, names_list_to_tuples])</span>
-</span><span id="L-217"><a href="#L-217"><span class="linenos">217</span></a><span class="sd">    &gt;&gt;&gt;     def do_printnames(self, args: argshell.Namespace):</span>
-</span><span id="L-218"><a href="#L-218"><span class="linenos">218</span></a><span class="sd">    &gt;&gt;&gt;         print(*[f&quot;{name[0]} {name[1]}&quot; for name in args.names], sep=&quot;\\n&quot;)</span>
-</span><span id="L-219"><a href="#L-219"><span class="linenos">219</span></a><span class="sd">    &gt;&gt;&gt;</span>
-</span><span id="L-220"><a href="#L-220"><span class="linenos">220</span></a><span class="sd">    &gt;&gt;&gt; NameShell().cmdloop()</span>
-</span><span id="L-221"><a href="#L-221"><span class="linenos">221</span></a><span class="sd">    &gt;&gt;&gt; Entering nameshell...</span>
-</span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a><span class="sd">    &gt;&gt;&gt; nameshell&gt;printnames karl marx fred hampton emma goldman angela davis nestor makhno</span>
-</span><span id="L-223"><a href="#L-223"><span class="linenos">223</span></a><span class="sd">    &gt;&gt;&gt; Karl Marx</span>
-</span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a><span class="sd">    &gt;&gt;&gt; Fred Hampton</span>
-</span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a><span class="sd">    &gt;&gt;&gt; Emma Goldman</span>
-</span><span id="L-226"><a href="#L-226"><span class="linenos">226</span></a><span class="sd">    &gt;&gt;&gt; Angela Davis</span>
-</span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a><span class="sd">    &gt;&gt;&gt; Nestor Makhno</span>
-</span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a><span class="sd">    &gt;&gt;&gt; nameshell&gt;printnames karl marx fred hampton emma goldman angela davis nestor makhno -i</span>
-</span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a><span class="sd">    &gt;&gt;&gt; K M</span>
-</span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a><span class="sd">    &gt;&gt;&gt; F H</span>
-</span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a><span class="sd">    &gt;&gt;&gt; E G</span>
-</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a><span class="sd">    &gt;&gt;&gt; A D</span>
-</span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a><span class="sd">    &gt;&gt;&gt; N M&quot;&quot;&quot;</span>
-</span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a>
-</span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a>    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span>
-</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a>        <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Namespace</span><span class="p">],</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span>
-</span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Any</span><span class="p">]:</span>
-</span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a>        <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a>        <span class="k">def</span> <span class="nf">inner</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-</span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a>            <span class="k">try</span><span class="p">:</span>
-</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a>                <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="p">()</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">command</span><span class="p">))</span>
-</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a>            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a>                <span class="c1"># On parser error, print help and skip post_parser and func execution</span>
-</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a>                <span class="k">if</span> <span class="s2">&quot;the following arguments are required&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
-</span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a>                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ERROR: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a>                <span class="k">if</span> <span class="s2">&quot;-h&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">command</span> <span class="ow">and</span> <span class="s2">&quot;--help&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">command</span><span class="p">:</span>
-</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a>                    <span class="k">try</span><span class="p">:</span>
-</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a>                        <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="p">()</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s2">&quot;--help&quot;</span><span class="p">])</span>
-</span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a>                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a>                        <span class="k">pass</span>
-</span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a>                <span class="k">return</span> <span class="kc">None</span>
-</span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a>            <span class="c1"># Don&#39;t execute function, only print parser help</span>
-</span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a>            <span class="k">if</span> <span class="s2">&quot;-h&quot;</span> <span class="ow">in</span> <span class="n">command</span> <span class="ow">or</span> <span class="s2">&quot;--help&quot;</span> <span class="ow">in</span> <span class="n">command</span><span class="p">:</span>
+</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a><span class="sd">    :param post_parsers: An optional list of functions to execute where each function takes an argshell.Namespace instance and returns an argshell.Namespace instance.</span>
+</span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a><span class="sd">        &#39;post_parser&#39; functions are executed in the order they are supplied.</span>
+</span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a>
+</span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a><span class="sd">    &gt;&gt;&gt; def get_parser() -&gt; argshell.ArgShellParser:</span>
+</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a><span class="sd">    &gt;&gt;&gt;     parser = argshell.ArgShellParser()</span>
+</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a><span class="sd">    &gt;&gt;&gt;     parser.add_argument(&quot;names&quot;, type=str, nargs=&quot;*&quot;, help=&quot;A list of first and last names to print.&quot;)</span>
+</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a><span class="sd">    &gt;&gt;&gt;     parser.add_argument(&quot;-i&quot;, &quot;--initials&quot;, action=&quot;store_true&quot;, help=&quot;Print the initials instead of the full name.&quot;)</span>
+</span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a><span class="sd">    &gt;&gt;&gt;     return parser</span>
+</span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a><span class="sd">    &gt;&gt;&gt;</span>
+</span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a><span class="sd">    &gt;&gt;&gt; # Convert list of first and last names to a list of tuples</span>
+</span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a><span class="sd">    &gt;&gt;&gt; def names_list_to_tuples(args: argshell.Namespace) -&gt; argshell.Namespace:</span>
+</span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a><span class="sd">    &gt;&gt;&gt;     args.names = [(first, last) for first, last in zip(args.names[::2], args.names[1::2])]</span>
+</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a><span class="sd">    &gt;&gt;&gt;     if args.initials:</span>
+</span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a><span class="sd">    &gt;&gt;&gt;         args.names = [(name[0][0], name[1][0]) for name in args.names]</span>
+</span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a><span class="sd">    &gt;&gt;&gt;     return args</span>
+</span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a><span class="sd">    &gt;&gt;&gt;</span>
+</span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a><span class="sd">    &gt;&gt;&gt; def capitalize_names(args: argshell.Namespace) -&gt; argshell.Namespace:</span>
+</span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a><span class="sd">    &gt;&gt;&gt;     args.names = [name.capitalize() for name in args.names]</span>
+</span><span id="L-213"><a href="#L-213"><span class="linenos">213</span></a><span class="sd">    &gt;&gt;&gt;     return args</span>
+</span><span id="L-214"><a href="#L-214"><span class="linenos">214</span></a><span class="sd">    &gt;&gt;&gt;</span>
+</span><span id="L-215"><a href="#L-215"><span class="linenos">215</span></a><span class="sd">    &gt;&gt;&gt; class NameShell(ArgShell):</span>
+</span><span id="L-216"><a href="#L-216"><span class="linenos">216</span></a><span class="sd">    &gt;&gt;&gt;     intro = &quot;Entering nameshell...&quot;</span>
+</span><span id="L-217"><a href="#L-217"><span class="linenos">217</span></a><span class="sd">    &gt;&gt;&gt;     prompt = &quot;nameshell&gt;&quot;</span>
+</span><span id="L-218"><a href="#L-218"><span class="linenos">218</span></a><span class="sd">    &gt;&gt;&gt;</span>
+</span><span id="L-219"><a href="#L-219"><span class="linenos">219</span></a><span class="sd">    &gt;&gt;&gt;     @with_parser(get_parser, [capitalize_names, names_list_to_tuples])</span>
+</span><span id="L-220"><a href="#L-220"><span class="linenos">220</span></a><span class="sd">    &gt;&gt;&gt;     def do_printnames(self, args: argshell.Namespace):</span>
+</span><span id="L-221"><a href="#L-221"><span class="linenos">221</span></a><span class="sd">    &gt;&gt;&gt;         print(*[f&quot;{name[0]} {name[1]}&quot; for name in args.names], sep=&quot;\\n&quot;)</span>
+</span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a><span class="sd">    &gt;&gt;&gt;</span>
+</span><span id="L-223"><a href="#L-223"><span class="linenos">223</span></a><span class="sd">    &gt;&gt;&gt; NameShell().cmdloop()</span>
+</span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a><span class="sd">    &gt;&gt;&gt; Entering nameshell...</span>
+</span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a><span class="sd">    &gt;&gt;&gt; nameshell&gt;printnames karl marx fred hampton emma goldman angela davis nestor makhno</span>
+</span><span id="L-226"><a href="#L-226"><span class="linenos">226</span></a><span class="sd">    &gt;&gt;&gt; Karl Marx</span>
+</span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a><span class="sd">    &gt;&gt;&gt; Fred Hampton</span>
+</span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a><span class="sd">    &gt;&gt;&gt; Emma Goldman</span>
+</span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a><span class="sd">    &gt;&gt;&gt; Angela Davis</span>
+</span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a><span class="sd">    &gt;&gt;&gt; Nestor Makhno</span>
+</span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a><span class="sd">    &gt;&gt;&gt; nameshell&gt;printnames karl marx fred hampton emma goldman angela davis nestor makhno -i</span>
+</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a><span class="sd">    &gt;&gt;&gt; K M</span>
+</span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a><span class="sd">    &gt;&gt;&gt; F H</span>
+</span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a><span class="sd">    &gt;&gt;&gt; E G</span>
+</span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a><span class="sd">    &gt;&gt;&gt; A D</span>
+</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a><span class="sd">    &gt;&gt;&gt; N M&quot;&quot;&quot;</span>
+</span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a>
+</span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a>    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span>
+</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a>        <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Namespace</span><span class="p">],</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span>
+</span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Any</span><span class="p">]:</span>
+</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a>        <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a>        <span class="k">def</span> <span class="nf">inner</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+</span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a>            <span class="k">try</span><span class="p">:</span>
+</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a>                <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="p">()</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">command</span><span class="p">))</span>
+</span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a>            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a>                <span class="c1"># On parser error, print help and skip post_parser and func execution</span>
+</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a>                <span class="k">if</span> <span class="s2">&quot;the following arguments are required&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a>                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ERROR: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a>                <span class="k">if</span> <span class="s2">&quot;-h&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">command</span> <span class="ow">and</span> <span class="s2">&quot;--help&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">command</span><span class="p">:</span>
+</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a>                    <span class="k">try</span><span class="p">:</span>
+</span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a>                        <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="p">()</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s2">&quot;--help&quot;</span><span class="p">])</span>
+</span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a>                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a>                        <span class="k">pass</span>
 </span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a>                <span class="k">return</span> <span class="kc">None</span>
-</span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a>            <span class="k">for</span> <span class="n">post_parser</span> <span class="ow">in</span> <span class="n">post_parsers</span><span class="p">:</span>
-</span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a>                <span class="n">args</span> <span class="o">=</span> <span class="n">post_parser</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-</span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a>
-</span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a>            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
-</span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a>
-</span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a>        <span class="k">return</span> <span class="n">inner</span>
-</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a>
-</span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a>    <span class="k">return</span> <span class="n">decorator</span>
+</span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a>            <span class="c1"># Don&#39;t execute function, only print parser help</span>
+</span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a>            <span class="k">if</span> <span class="s2">&quot;-h&quot;</span> <span class="ow">in</span> <span class="n">command</span> <span class="ow">or</span> <span class="s2">&quot;--help&quot;</span> <span class="ow">in</span> <span class="n">command</span><span class="p">:</span>
+</span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a>                <span class="k">return</span> <span class="kc">None</span>
+</span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a>            <span class="k">for</span> <span class="n">post_parser</span> <span class="ow">in</span> <span class="n">post_parsers</span><span class="p">:</span>
+</span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a>                <span class="n">args</span> <span class="o">=</span> <span class="n">post_parser</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+</span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a>
+</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a>            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+</span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a>
+</span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a>        <span class="k">return</span> <span class="n">inner</span>
+</span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a>
+</span><span id="L-265"><a href="#L-265"><span class="linenos">265</span></a>    <span class="k">return</span> <span class="n">decorator</span>
 </span></pre></div>
 
 
@@ -703,6 +709,9 @@ should either exit or raise an exception.</p>
 </span><span id="ArgShell-180"><a href="#ArgShell-180"><span class="linenos">180</span></a>                    <span class="n">readline</span><span class="o">.</span><span class="n">set_completer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">old_completer</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 </span><span id="ArgShell-181"><a href="#ArgShell-181"><span class="linenos">181</span></a>                <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
 </span><span id="ArgShell-182"><a href="#ArgShell-182"><span class="linenos">182</span></a>                    <span class="k">pass</span>
+</span><span id="ArgShell-183"><a href="#ArgShell-183"><span class="linenos">183</span></a>
+</span><span id="ArgShell-184"><a href="#ArgShell-184"><span class="linenos">184</span></a>    <span class="k">def</span> <span class="nf">emptyline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="ArgShell-185"><a href="#ArgShell-185"><span class="linenos">185</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
@@ -908,6 +917,30 @@ the remainder of the line as argument.</p>
 
 
                             </div>
+                            <div id="ArgShell.emptyline" class="classattr">
+                                        <input id="ArgShell.emptyline-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">emptyline</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="ArgShell.emptyline-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#ArgShell.emptyline"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ArgShell.emptyline-184"><a href="#ArgShell.emptyline-184"><span class="linenos">184</span></a>    <span class="k">def</span> <span class="nf">emptyline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="ArgShell.emptyline-185"><a href="#ArgShell.emptyline-185"><span class="linenos">185</span></a>        <span class="o">...</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Called when an empty line is entered in response to the prompt.</p>
+
+<p>If this method is not overridden, it repeats the last nonempty
+command entered.</p>
+</div>
+
+
+                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
@@ -919,7 +952,6 @@ the remainder of the line as argument.</p>
                 <dd id="ArgShell.postloop" class="function">postloop</dd>
                 <dd id="ArgShell.parseline" class="function">parseline</dd>
                 <dd id="ArgShell.onecmd" class="function">onecmd</dd>
-                <dd id="ArgShell.emptyline" class="function">emptyline</dd>
                 <dd id="ArgShell.default" class="function">default</dd>
                 <dd id="ArgShell.completedefault" class="function">completedefault</dd>
                 <dd id="ArgShell.completenames" class="function">completenames</dd>
@@ -944,85 +976,85 @@ the remainder of the line as argument.</p>
 
     </div>
     <a class="headerlink" href="#with_parser"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="with_parser-185"><a href="#with_parser-185"><span class="linenos">185</span></a><span class="k">def</span> <span class="nf">with_parser</span><span class="p">(</span>
-</span><span id="with_parser-186"><a href="#with_parser-186"><span class="linenos">186</span></a>    <span class="n">parser</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">ArgShellParser</span><span class="p">],</span>
-</span><span id="with_parser-187"><a href="#with_parser-187"><span class="linenos">187</span></a>    <span class="n">post_parsers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Namespace</span><span class="p">],</span> <span class="n">Namespace</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[],</span>
-</span><span id="with_parser-188"><a href="#with_parser-188"><span class="linenos">188</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Namespace</span><span class="p">],</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]:</span>
-</span><span id="with_parser-189"><a href="#with_parser-189"><span class="linenos">189</span></a>    <span class="sd">&quot;&quot;&quot;Decorate a &#39;do_*&#39; function in an argshell.ArgShell class with this function to pass an argshell.Namespace object to the decorated function instead of a string.</span>
-</span><span id="with_parser-190"><a href="#with_parser-190"><span class="linenos">190</span></a>
-</span><span id="with_parser-191"><a href="#with_parser-191"><span class="linenos">191</span></a><span class="sd">    :param parser: A function that creates an argshell.ArgShellParser instance, adds arguments to it, and returns the parser.</span>
-</span><span id="with_parser-192"><a href="#with_parser-192"><span class="linenos">192</span></a>
-</span><span id="with_parser-193"><a href="#with_parser-193"><span class="linenos">193</span></a><span class="sd">    :param post_parsers: An optional list of functions to execute where each function takes an argshell.Namespace instance and returns an argshell.Namespace instance.</span>
-</span><span id="with_parser-194"><a href="#with_parser-194"><span class="linenos">194</span></a><span class="sd">        &#39;post_parser&#39; functions are executed in the order they are supplied.</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="with_parser-188"><a href="#with_parser-188"><span class="linenos">188</span></a><span class="k">def</span> <span class="nf">with_parser</span><span class="p">(</span>
+</span><span id="with_parser-189"><a href="#with_parser-189"><span class="linenos">189</span></a>    <span class="n">parser</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">ArgShellParser</span><span class="p">],</span>
+</span><span id="with_parser-190"><a href="#with_parser-190"><span class="linenos">190</span></a>    <span class="n">post_parsers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Namespace</span><span class="p">],</span> <span class="n">Namespace</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[],</span>
+</span><span id="with_parser-191"><a href="#with_parser-191"><span class="linenos">191</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Namespace</span><span class="p">],</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]:</span>
+</span><span id="with_parser-192"><a href="#with_parser-192"><span class="linenos">192</span></a>    <span class="sd">&quot;&quot;&quot;Decorate a &#39;do_*&#39; function in an argshell.ArgShell class with this function to pass an argshell.Namespace object to the decorated function instead of a string.</span>
+</span><span id="with_parser-193"><a href="#with_parser-193"><span class="linenos">193</span></a>
+</span><span id="with_parser-194"><a href="#with_parser-194"><span class="linenos">194</span></a><span class="sd">    :param parser: A function that creates an argshell.ArgShellParser instance, adds arguments to it, and returns the parser.</span>
 </span><span id="with_parser-195"><a href="#with_parser-195"><span class="linenos">195</span></a>
-</span><span id="with_parser-196"><a href="#with_parser-196"><span class="linenos">196</span></a><span class="sd">    &gt;&gt;&gt; def get_parser() -&gt; argshell.ArgShellParser:</span>
-</span><span id="with_parser-197"><a href="#with_parser-197"><span class="linenos">197</span></a><span class="sd">    &gt;&gt;&gt;     parser = argshell.ArgShellParser()</span>
-</span><span id="with_parser-198"><a href="#with_parser-198"><span class="linenos">198</span></a><span class="sd">    &gt;&gt;&gt;     parser.add_argument(&quot;names&quot;, type=str, nargs=&quot;*&quot;, help=&quot;A list of first and last names to print.&quot;)</span>
-</span><span id="with_parser-199"><a href="#with_parser-199"><span class="linenos">199</span></a><span class="sd">    &gt;&gt;&gt;     parser.add_argument(&quot;-i&quot;, &quot;--initials&quot;, action=&quot;store_true&quot;, help=&quot;Print the initials instead of the full name.&quot;)</span>
-</span><span id="with_parser-200"><a href="#with_parser-200"><span class="linenos">200</span></a><span class="sd">    &gt;&gt;&gt;     return parser</span>
-</span><span id="with_parser-201"><a href="#with_parser-201"><span class="linenos">201</span></a><span class="sd">    &gt;&gt;&gt;</span>
-</span><span id="with_parser-202"><a href="#with_parser-202"><span class="linenos">202</span></a><span class="sd">    &gt;&gt;&gt; # Convert list of first and last names to a list of tuples</span>
-</span><span id="with_parser-203"><a href="#with_parser-203"><span class="linenos">203</span></a><span class="sd">    &gt;&gt;&gt; def names_list_to_tuples(args: argshell.Namespace) -&gt; argshell.Namespace:</span>
-</span><span id="with_parser-204"><a href="#with_parser-204"><span class="linenos">204</span></a><span class="sd">    &gt;&gt;&gt;     args.names = [(first, last) for first, last in zip(args.names[::2], args.names[1::2])]</span>
-</span><span id="with_parser-205"><a href="#with_parser-205"><span class="linenos">205</span></a><span class="sd">    &gt;&gt;&gt;     if args.initials:</span>
-</span><span id="with_parser-206"><a href="#with_parser-206"><span class="linenos">206</span></a><span class="sd">    &gt;&gt;&gt;         args.names = [(name[0][0], name[1][0]) for name in args.names]</span>
-</span><span id="with_parser-207"><a href="#with_parser-207"><span class="linenos">207</span></a><span class="sd">    &gt;&gt;&gt;     return args</span>
-</span><span id="with_parser-208"><a href="#with_parser-208"><span class="linenos">208</span></a><span class="sd">    &gt;&gt;&gt;</span>
-</span><span id="with_parser-209"><a href="#with_parser-209"><span class="linenos">209</span></a><span class="sd">    &gt;&gt;&gt; def capitalize_names(args: argshell.Namespace) -&gt; argshell.Namespace:</span>
-</span><span id="with_parser-210"><a href="#with_parser-210"><span class="linenos">210</span></a><span class="sd">    &gt;&gt;&gt;     args.names = [name.capitalize() for name in args.names]</span>
-</span><span id="with_parser-211"><a href="#with_parser-211"><span class="linenos">211</span></a><span class="sd">    &gt;&gt;&gt;     return args</span>
-</span><span id="with_parser-212"><a href="#with_parser-212"><span class="linenos">212</span></a><span class="sd">    &gt;&gt;&gt;</span>
-</span><span id="with_parser-213"><a href="#with_parser-213"><span class="linenos">213</span></a><span class="sd">    &gt;&gt;&gt; class NameShell(ArgShell):</span>
-</span><span id="with_parser-214"><a href="#with_parser-214"><span class="linenos">214</span></a><span class="sd">    &gt;&gt;&gt;     intro = &quot;Entering nameshell...&quot;</span>
-</span><span id="with_parser-215"><a href="#with_parser-215"><span class="linenos">215</span></a><span class="sd">    &gt;&gt;&gt;     prompt = &quot;nameshell&gt;&quot;</span>
-</span><span id="with_parser-216"><a href="#with_parser-216"><span class="linenos">216</span></a><span class="sd">    &gt;&gt;&gt;</span>
-</span><span id="with_parser-217"><a href="#with_parser-217"><span class="linenos">217</span></a><span class="sd">    &gt;&gt;&gt;     @with_parser(get_parser, [capitalize_names, names_list_to_tuples])</span>
-</span><span id="with_parser-218"><a href="#with_parser-218"><span class="linenos">218</span></a><span class="sd">    &gt;&gt;&gt;     def do_printnames(self, args: argshell.Namespace):</span>
-</span><span id="with_parser-219"><a href="#with_parser-219"><span class="linenos">219</span></a><span class="sd">    &gt;&gt;&gt;         print(*[f&quot;{name[0]} {name[1]}&quot; for name in args.names], sep=&quot;\\n&quot;)</span>
-</span><span id="with_parser-220"><a href="#with_parser-220"><span class="linenos">220</span></a><span class="sd">    &gt;&gt;&gt;</span>
-</span><span id="with_parser-221"><a href="#with_parser-221"><span class="linenos">221</span></a><span class="sd">    &gt;&gt;&gt; NameShell().cmdloop()</span>
-</span><span id="with_parser-222"><a href="#with_parser-222"><span class="linenos">222</span></a><span class="sd">    &gt;&gt;&gt; Entering nameshell...</span>
-</span><span id="with_parser-223"><a href="#with_parser-223"><span class="linenos">223</span></a><span class="sd">    &gt;&gt;&gt; nameshell&gt;printnames karl marx fred hampton emma goldman angela davis nestor makhno</span>
-</span><span id="with_parser-224"><a href="#with_parser-224"><span class="linenos">224</span></a><span class="sd">    &gt;&gt;&gt; Karl Marx</span>
-</span><span id="with_parser-225"><a href="#with_parser-225"><span class="linenos">225</span></a><span class="sd">    &gt;&gt;&gt; Fred Hampton</span>
-</span><span id="with_parser-226"><a href="#with_parser-226"><span class="linenos">226</span></a><span class="sd">    &gt;&gt;&gt; Emma Goldman</span>
-</span><span id="with_parser-227"><a href="#with_parser-227"><span class="linenos">227</span></a><span class="sd">    &gt;&gt;&gt; Angela Davis</span>
-</span><span id="with_parser-228"><a href="#with_parser-228"><span class="linenos">228</span></a><span class="sd">    &gt;&gt;&gt; Nestor Makhno</span>
-</span><span id="with_parser-229"><a href="#with_parser-229"><span class="linenos">229</span></a><span class="sd">    &gt;&gt;&gt; nameshell&gt;printnames karl marx fred hampton emma goldman angela davis nestor makhno -i</span>
-</span><span id="with_parser-230"><a href="#with_parser-230"><span class="linenos">230</span></a><span class="sd">    &gt;&gt;&gt; K M</span>
-</span><span id="with_parser-231"><a href="#with_parser-231"><span class="linenos">231</span></a><span class="sd">    &gt;&gt;&gt; F H</span>
-</span><span id="with_parser-232"><a href="#with_parser-232"><span class="linenos">232</span></a><span class="sd">    &gt;&gt;&gt; E G</span>
-</span><span id="with_parser-233"><a href="#with_parser-233"><span class="linenos">233</span></a><span class="sd">    &gt;&gt;&gt; A D</span>
-</span><span id="with_parser-234"><a href="#with_parser-234"><span class="linenos">234</span></a><span class="sd">    &gt;&gt;&gt; N M&quot;&quot;&quot;</span>
-</span><span id="with_parser-235"><a href="#with_parser-235"><span class="linenos">235</span></a>
-</span><span id="with_parser-236"><a href="#with_parser-236"><span class="linenos">236</span></a>    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span>
-</span><span id="with_parser-237"><a href="#with_parser-237"><span class="linenos">237</span></a>        <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Namespace</span><span class="p">],</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span>
-</span><span id="with_parser-238"><a href="#with_parser-238"><span class="linenos">238</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Any</span><span class="p">]:</span>
-</span><span id="with_parser-239"><a href="#with_parser-239"><span class="linenos">239</span></a>        <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-</span><span id="with_parser-240"><a href="#with_parser-240"><span class="linenos">240</span></a>        <span class="k">def</span> <span class="nf">inner</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-</span><span id="with_parser-241"><a href="#with_parser-241"><span class="linenos">241</span></a>            <span class="k">try</span><span class="p">:</span>
-</span><span id="with_parser-242"><a href="#with_parser-242"><span class="linenos">242</span></a>                <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="p">()</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">command</span><span class="p">))</span>
-</span><span id="with_parser-243"><a href="#with_parser-243"><span class="linenos">243</span></a>            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span id="with_parser-244"><a href="#with_parser-244"><span class="linenos">244</span></a>                <span class="c1"># On parser error, print help and skip post_parser and func execution</span>
-</span><span id="with_parser-245"><a href="#with_parser-245"><span class="linenos">245</span></a>                <span class="k">if</span> <span class="s2">&quot;the following arguments are required&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
-</span><span id="with_parser-246"><a href="#with_parser-246"><span class="linenos">246</span></a>                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ERROR: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="with_parser-247"><a href="#with_parser-247"><span class="linenos">247</span></a>                <span class="k">if</span> <span class="s2">&quot;-h&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">command</span> <span class="ow">and</span> <span class="s2">&quot;--help&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">command</span><span class="p">:</span>
-</span><span id="with_parser-248"><a href="#with_parser-248"><span class="linenos">248</span></a>                    <span class="k">try</span><span class="p">:</span>
-</span><span id="with_parser-249"><a href="#with_parser-249"><span class="linenos">249</span></a>                        <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="p">()</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s2">&quot;--help&quot;</span><span class="p">])</span>
-</span><span id="with_parser-250"><a href="#with_parser-250"><span class="linenos">250</span></a>                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span id="with_parser-251"><a href="#with_parser-251"><span class="linenos">251</span></a>                        <span class="k">pass</span>
-</span><span id="with_parser-252"><a href="#with_parser-252"><span class="linenos">252</span></a>                <span class="k">return</span> <span class="kc">None</span>
-</span><span id="with_parser-253"><a href="#with_parser-253"><span class="linenos">253</span></a>            <span class="c1"># Don&#39;t execute function, only print parser help</span>
-</span><span id="with_parser-254"><a href="#with_parser-254"><span class="linenos">254</span></a>            <span class="k">if</span> <span class="s2">&quot;-h&quot;</span> <span class="ow">in</span> <span class="n">command</span> <span class="ow">or</span> <span class="s2">&quot;--help&quot;</span> <span class="ow">in</span> <span class="n">command</span><span class="p">:</span>
+</span><span id="with_parser-196"><a href="#with_parser-196"><span class="linenos">196</span></a><span class="sd">    :param post_parsers: An optional list of functions to execute where each function takes an argshell.Namespace instance and returns an argshell.Namespace instance.</span>
+</span><span id="with_parser-197"><a href="#with_parser-197"><span class="linenos">197</span></a><span class="sd">        &#39;post_parser&#39; functions are executed in the order they are supplied.</span>
+</span><span id="with_parser-198"><a href="#with_parser-198"><span class="linenos">198</span></a>
+</span><span id="with_parser-199"><a href="#with_parser-199"><span class="linenos">199</span></a><span class="sd">    &gt;&gt;&gt; def get_parser() -&gt; argshell.ArgShellParser:</span>
+</span><span id="with_parser-200"><a href="#with_parser-200"><span class="linenos">200</span></a><span class="sd">    &gt;&gt;&gt;     parser = argshell.ArgShellParser()</span>
+</span><span id="with_parser-201"><a href="#with_parser-201"><span class="linenos">201</span></a><span class="sd">    &gt;&gt;&gt;     parser.add_argument(&quot;names&quot;, type=str, nargs=&quot;*&quot;, help=&quot;A list of first and last names to print.&quot;)</span>
+</span><span id="with_parser-202"><a href="#with_parser-202"><span class="linenos">202</span></a><span class="sd">    &gt;&gt;&gt;     parser.add_argument(&quot;-i&quot;, &quot;--initials&quot;, action=&quot;store_true&quot;, help=&quot;Print the initials instead of the full name.&quot;)</span>
+</span><span id="with_parser-203"><a href="#with_parser-203"><span class="linenos">203</span></a><span class="sd">    &gt;&gt;&gt;     return parser</span>
+</span><span id="with_parser-204"><a href="#with_parser-204"><span class="linenos">204</span></a><span class="sd">    &gt;&gt;&gt;</span>
+</span><span id="with_parser-205"><a href="#with_parser-205"><span class="linenos">205</span></a><span class="sd">    &gt;&gt;&gt; # Convert list of first and last names to a list of tuples</span>
+</span><span id="with_parser-206"><a href="#with_parser-206"><span class="linenos">206</span></a><span class="sd">    &gt;&gt;&gt; def names_list_to_tuples(args: argshell.Namespace) -&gt; argshell.Namespace:</span>
+</span><span id="with_parser-207"><a href="#with_parser-207"><span class="linenos">207</span></a><span class="sd">    &gt;&gt;&gt;     args.names = [(first, last) for first, last in zip(args.names[::2], args.names[1::2])]</span>
+</span><span id="with_parser-208"><a href="#with_parser-208"><span class="linenos">208</span></a><span class="sd">    &gt;&gt;&gt;     if args.initials:</span>
+</span><span id="with_parser-209"><a href="#with_parser-209"><span class="linenos">209</span></a><span class="sd">    &gt;&gt;&gt;         args.names = [(name[0][0], name[1][0]) for name in args.names]</span>
+</span><span id="with_parser-210"><a href="#with_parser-210"><span class="linenos">210</span></a><span class="sd">    &gt;&gt;&gt;     return args</span>
+</span><span id="with_parser-211"><a href="#with_parser-211"><span class="linenos">211</span></a><span class="sd">    &gt;&gt;&gt;</span>
+</span><span id="with_parser-212"><a href="#with_parser-212"><span class="linenos">212</span></a><span class="sd">    &gt;&gt;&gt; def capitalize_names(args: argshell.Namespace) -&gt; argshell.Namespace:</span>
+</span><span id="with_parser-213"><a href="#with_parser-213"><span class="linenos">213</span></a><span class="sd">    &gt;&gt;&gt;     args.names = [name.capitalize() for name in args.names]</span>
+</span><span id="with_parser-214"><a href="#with_parser-214"><span class="linenos">214</span></a><span class="sd">    &gt;&gt;&gt;     return args</span>
+</span><span id="with_parser-215"><a href="#with_parser-215"><span class="linenos">215</span></a><span class="sd">    &gt;&gt;&gt;</span>
+</span><span id="with_parser-216"><a href="#with_parser-216"><span class="linenos">216</span></a><span class="sd">    &gt;&gt;&gt; class NameShell(ArgShell):</span>
+</span><span id="with_parser-217"><a href="#with_parser-217"><span class="linenos">217</span></a><span class="sd">    &gt;&gt;&gt;     intro = &quot;Entering nameshell...&quot;</span>
+</span><span id="with_parser-218"><a href="#with_parser-218"><span class="linenos">218</span></a><span class="sd">    &gt;&gt;&gt;     prompt = &quot;nameshell&gt;&quot;</span>
+</span><span id="with_parser-219"><a href="#with_parser-219"><span class="linenos">219</span></a><span class="sd">    &gt;&gt;&gt;</span>
+</span><span id="with_parser-220"><a href="#with_parser-220"><span class="linenos">220</span></a><span class="sd">    &gt;&gt;&gt;     @with_parser(get_parser, [capitalize_names, names_list_to_tuples])</span>
+</span><span id="with_parser-221"><a href="#with_parser-221"><span class="linenos">221</span></a><span class="sd">    &gt;&gt;&gt;     def do_printnames(self, args: argshell.Namespace):</span>
+</span><span id="with_parser-222"><a href="#with_parser-222"><span class="linenos">222</span></a><span class="sd">    &gt;&gt;&gt;         print(*[f&quot;{name[0]} {name[1]}&quot; for name in args.names], sep=&quot;\\n&quot;)</span>
+</span><span id="with_parser-223"><a href="#with_parser-223"><span class="linenos">223</span></a><span class="sd">    &gt;&gt;&gt;</span>
+</span><span id="with_parser-224"><a href="#with_parser-224"><span class="linenos">224</span></a><span class="sd">    &gt;&gt;&gt; NameShell().cmdloop()</span>
+</span><span id="with_parser-225"><a href="#with_parser-225"><span class="linenos">225</span></a><span class="sd">    &gt;&gt;&gt; Entering nameshell...</span>
+</span><span id="with_parser-226"><a href="#with_parser-226"><span class="linenos">226</span></a><span class="sd">    &gt;&gt;&gt; nameshell&gt;printnames karl marx fred hampton emma goldman angela davis nestor makhno</span>
+</span><span id="with_parser-227"><a href="#with_parser-227"><span class="linenos">227</span></a><span class="sd">    &gt;&gt;&gt; Karl Marx</span>
+</span><span id="with_parser-228"><a href="#with_parser-228"><span class="linenos">228</span></a><span class="sd">    &gt;&gt;&gt; Fred Hampton</span>
+</span><span id="with_parser-229"><a href="#with_parser-229"><span class="linenos">229</span></a><span class="sd">    &gt;&gt;&gt; Emma Goldman</span>
+</span><span id="with_parser-230"><a href="#with_parser-230"><span class="linenos">230</span></a><span class="sd">    &gt;&gt;&gt; Angela Davis</span>
+</span><span id="with_parser-231"><a href="#with_parser-231"><span class="linenos">231</span></a><span class="sd">    &gt;&gt;&gt; Nestor Makhno</span>
+</span><span id="with_parser-232"><a href="#with_parser-232"><span class="linenos">232</span></a><span class="sd">    &gt;&gt;&gt; nameshell&gt;printnames karl marx fred hampton emma goldman angela davis nestor makhno -i</span>
+</span><span id="with_parser-233"><a href="#with_parser-233"><span class="linenos">233</span></a><span class="sd">    &gt;&gt;&gt; K M</span>
+</span><span id="with_parser-234"><a href="#with_parser-234"><span class="linenos">234</span></a><span class="sd">    &gt;&gt;&gt; F H</span>
+</span><span id="with_parser-235"><a href="#with_parser-235"><span class="linenos">235</span></a><span class="sd">    &gt;&gt;&gt; E G</span>
+</span><span id="with_parser-236"><a href="#with_parser-236"><span class="linenos">236</span></a><span class="sd">    &gt;&gt;&gt; A D</span>
+</span><span id="with_parser-237"><a href="#with_parser-237"><span class="linenos">237</span></a><span class="sd">    &gt;&gt;&gt; N M&quot;&quot;&quot;</span>
+</span><span id="with_parser-238"><a href="#with_parser-238"><span class="linenos">238</span></a>
+</span><span id="with_parser-239"><a href="#with_parser-239"><span class="linenos">239</span></a>    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span>
+</span><span id="with_parser-240"><a href="#with_parser-240"><span class="linenos">240</span></a>        <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Namespace</span><span class="p">],</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span>
+</span><span id="with_parser-241"><a href="#with_parser-241"><span class="linenos">241</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Any</span><span class="p">]:</span>
+</span><span id="with_parser-242"><a href="#with_parser-242"><span class="linenos">242</span></a>        <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span id="with_parser-243"><a href="#with_parser-243"><span class="linenos">243</span></a>        <span class="k">def</span> <span class="nf">inner</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+</span><span id="with_parser-244"><a href="#with_parser-244"><span class="linenos">244</span></a>            <span class="k">try</span><span class="p">:</span>
+</span><span id="with_parser-245"><a href="#with_parser-245"><span class="linenos">245</span></a>                <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="p">()</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">command</span><span class="p">))</span>
+</span><span id="with_parser-246"><a href="#with_parser-246"><span class="linenos">246</span></a>            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="with_parser-247"><a href="#with_parser-247"><span class="linenos">247</span></a>                <span class="c1"># On parser error, print help and skip post_parser and func execution</span>
+</span><span id="with_parser-248"><a href="#with_parser-248"><span class="linenos">248</span></a>                <span class="k">if</span> <span class="s2">&quot;the following arguments are required&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+</span><span id="with_parser-249"><a href="#with_parser-249"><span class="linenos">249</span></a>                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ERROR: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="with_parser-250"><a href="#with_parser-250"><span class="linenos">250</span></a>                <span class="k">if</span> <span class="s2">&quot;-h&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">command</span> <span class="ow">and</span> <span class="s2">&quot;--help&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">command</span><span class="p">:</span>
+</span><span id="with_parser-251"><a href="#with_parser-251"><span class="linenos">251</span></a>                    <span class="k">try</span><span class="p">:</span>
+</span><span id="with_parser-252"><a href="#with_parser-252"><span class="linenos">252</span></a>                        <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="p">()</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s2">&quot;--help&quot;</span><span class="p">])</span>
+</span><span id="with_parser-253"><a href="#with_parser-253"><span class="linenos">253</span></a>                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="with_parser-254"><a href="#with_parser-254"><span class="linenos">254</span></a>                        <span class="k">pass</span>
 </span><span id="with_parser-255"><a href="#with_parser-255"><span class="linenos">255</span></a>                <span class="k">return</span> <span class="kc">None</span>
-</span><span id="with_parser-256"><a href="#with_parser-256"><span class="linenos">256</span></a>            <span class="k">for</span> <span class="n">post_parser</span> <span class="ow">in</span> <span class="n">post_parsers</span><span class="p">:</span>
-</span><span id="with_parser-257"><a href="#with_parser-257"><span class="linenos">257</span></a>                <span class="n">args</span> <span class="o">=</span> <span class="n">post_parser</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-</span><span id="with_parser-258"><a href="#with_parser-258"><span class="linenos">258</span></a>
-</span><span id="with_parser-259"><a href="#with_parser-259"><span class="linenos">259</span></a>            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
-</span><span id="with_parser-260"><a href="#with_parser-260"><span class="linenos">260</span></a>
-</span><span id="with_parser-261"><a href="#with_parser-261"><span class="linenos">261</span></a>        <span class="k">return</span> <span class="n">inner</span>
-</span><span id="with_parser-262"><a href="#with_parser-262"><span class="linenos">262</span></a>
-</span><span id="with_parser-263"><a href="#with_parser-263"><span class="linenos">263</span></a>    <span class="k">return</span> <span class="n">decorator</span>
+</span><span id="with_parser-256"><a href="#with_parser-256"><span class="linenos">256</span></a>            <span class="c1"># Don&#39;t execute function, only print parser help</span>
+</span><span id="with_parser-257"><a href="#with_parser-257"><span class="linenos">257</span></a>            <span class="k">if</span> <span class="s2">&quot;-h&quot;</span> <span class="ow">in</span> <span class="n">command</span> <span class="ow">or</span> <span class="s2">&quot;--help&quot;</span> <span class="ow">in</span> <span class="n">command</span><span class="p">:</span>
+</span><span id="with_parser-258"><a href="#with_parser-258"><span class="linenos">258</span></a>                <span class="k">return</span> <span class="kc">None</span>
+</span><span id="with_parser-259"><a href="#with_parser-259"><span class="linenos">259</span></a>            <span class="k">for</span> <span class="n">post_parser</span> <span class="ow">in</span> <span class="n">post_parsers</span><span class="p">:</span>
+</span><span id="with_parser-260"><a href="#with_parser-260"><span class="linenos">260</span></a>                <span class="n">args</span> <span class="o">=</span> <span class="n">post_parser</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+</span><span id="with_parser-261"><a href="#with_parser-261"><span class="linenos">261</span></a>
+</span><span id="with_parser-262"><a href="#with_parser-262"><span class="linenos">262</span></a>            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+</span><span id="with_parser-263"><a href="#with_parser-263"><span class="linenos">263</span></a>
+</span><span id="with_parser-264"><a href="#with_parser-264"><span class="linenos">264</span></a>        <span class="k">return</span> <span class="n">inner</span>
+</span><span id="with_parser-265"><a href="#with_parser-265"><span class="linenos">265</span></a>
+</span><span id="with_parser-266"><a href="#with_parser-266"><span class="linenos">266</span></a>    <span class="k">return</span> <span class="n">decorator</span>
 </span></pre></div>
 
 
