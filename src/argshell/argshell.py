@@ -1,7 +1,9 @@
 import argparse
 import cmd
+import inspect
 import os
 import shlex
+import subprocess
 import sys
 import traceback
 from functools import wraps
@@ -11,7 +13,8 @@ from typing import Any, Callable
 class Namespace(argparse.Namespace):
     """Simple object for storing attributes.
 
-    Implements equality by attribute names and values, and provides a simple string representation."""
+    Implements equality by attribute names and values, and provides a simple string representation.
+    """
 
 
 class ArgShellParser(argparse.ArgumentParser):
@@ -57,7 +60,7 @@ class ArgShell(cmd.Cmd):
     intro = "Entering argshell..."
     prompt = "argshell>"
 
-    def do_quit(self, command: str):
+    def do_quit(self, _: str) -> bool:
         """Quit shell."""
         return True
 
@@ -65,9 +68,16 @@ class ArgShell(cmd.Cmd):
         """Execute command with `os.system()`."""
         os.system(command)
 
+    def do_reload(self, _: str):
+        """Reload this shell."""
+        args = [sys.executable, inspect.getsourcefile(type(self))]
+        subprocess.run(args)
+        sys.exit()
+
     def do_help(self, arg):
         """List available commands with "help" or detailed help with "help cmd".
-        If using 'help cmd' and the cmd is decorated with a parser, the parser help will also be printed."""
+        If using 'help cmd' and the cmd is decorated with a parser, the parser help will also be printed.
+        """
         if arg:
             # XXX check arg syntax
             try:
