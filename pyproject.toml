@@ -1,42 +1,32 @@
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
 [project]
 name = "argshell"
 description = "Integrates the argparse and cmd modules."
-version = "1.3.0"
-requires-python = ">=3.10"
+version = "1.4.0"
 dependencies = []
 readme = "README.md"
 keywords = ["argparse", "cmd", "shell", "commandline", "terminal"]
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-    ]
+classifiers = ["Programming Language :: Python :: 3", "License :: OSI Approved :: MIT License", "Operating System :: OS Independent"]
+requires-python = ">=3.10"
 
 [[project.authors]]
 name = "Matt Manes"
 email = "mattmanes@pm.me"
 
 [project.urls]
-"Homepage" = "https://github.com/matt-manes/argshell"
-"Documentation" = "https://github.com/matt-manes/argshell/tree/main/docs"
+Homepage = "https://github.com/matt-manes/argshell"
+Documentation = "https://github.com/matt-manes/argshell/tree/main/docs"
 "Source code" = "https://github.com/matt-manes/argshell/tree/main/src/argshell"
 
+[project.scripts]
+
+[tool]
 [tool.pytest.ini_options]
-addopts = [
-    "--import-mode=importlib",
-    ]
+addopts = ["--import-mode=importlib"]
 pythonpath = "src"
 
 [tool.hatch.build.targets.sdist]
-exclude = [
-    ".coverage",
-    ".pytest_cache",
-    ".vscode",
-    "tests",
-    ".gitignore"
-    ]
+exclude = [".coverage", ".pytest_cache", ".vscode", "tests", ".gitignore"]
 
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
