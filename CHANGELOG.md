@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.4.0 (2024-01-26)
+
+#### New Features
+
+* add reload command
+#### Docs
+
+* add missing version prefix
+
+
 ## v1.3.0 (2023-05-03)
 
 #### New Features
