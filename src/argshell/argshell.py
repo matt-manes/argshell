@@ -194,7 +194,8 @@ class ArgShell(cmd.Cmd):
                 except ImportError:
                     pass
 
-    def emptyline(self): ...  # type: ignore
+    def emptyline(self):
+        ...  # type: ignore
 
 
 def with_parser(
