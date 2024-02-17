@@ -41,15 +41,15 @@ class ArgShellParser(argparse.ArgumentParser):
             error info when an error occurs
     """
 
-    def exit(self, status=0, message=None):
+    def exit(self, status: int = 0, message: str | None = None):  # type: ignore
         """Override to prevent shell exit when passing -h/--help switches."""
         if message:
             self._print_message(message, sys.stderr)
 
-    def error(self, message):
+    def error(self, message: str):
         raise Exception(f"prog: {self.prog}, message: {message}")
 
-    def parse_args(self, *args, **kwargs) -> Namespace:
+    def parse_args(self, *args: Any, **kwargs: Any) -> Namespace:
         parsed_args: Namespace = super().parse_args(*args, **kwargs)
         return parsed_args
 
@@ -70,11 +70,15 @@ class ArgShell(cmd.Cmd):
 
     def do_reload(self, _: str):
         """Reload this shell."""
-        args = [sys.executable, inspect.getsourcefile(type(self))]
-        subprocess.run(args)
+        source_file = inspect.getsourcefile(type(self))
+        if not source_file:
+            raise FileNotFoundError(
+                "Can't reload shell, this source file could not be found (somehow...)"
+            )
+        subprocess.run([sys.executable, source_file])
         sys.exit()
 
-    def do_help(self, arg):
+    def do_help(self, arg: str):
         """List available commands with "help" or detailed help with "help cmd".
         If using 'help cmd' and the cmd is decorated with a parser, the parser help will also be printed.
         """
@@ -105,9 +109,9 @@ class ArgShell(cmd.Cmd):
             func()
         else:
             names = self.get_names()
-            cmds_doc = []
-            cmds_undoc = []
-            topics = set()
+            cmds_doc: list[str] = []
+            cmds_undoc: list[str] = []
+            topics: set[str] = set()
             for name in names:
                 if name[:5] == "help_":
                     topics.add(name[5:])
@@ -132,7 +136,7 @@ class ArgShell(cmd.Cmd):
             self.print_topics(self.misc_header, sorted(topics), 15, 80)
             self.print_topics(self.undoc_header, cmds_undoc, 15, 80)
 
-    def cmdloop(self, intro=None):
+    def cmdloop(self, intro: str | None = None):
         """Repeatedly issue a prompt, accept input, parse an initial prefix
         off the received input, and dispatch to action methods, passing them
         the remainder of the line as argument.
@@ -190,8 +194,7 @@ class ArgShell(cmd.Cmd):
                 except ImportError:
                     pass
 
-    def emptyline(self):
-        ...
+    def emptyline(self): ...  # type: ignore
 
 
 def with_parser(
