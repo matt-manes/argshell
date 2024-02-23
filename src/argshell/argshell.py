@@ -7,7 +7,7 @@ import subprocess
 import sys
 import traceback
 from functools import wraps
-from typing import Any, Callable, Sequence
+from typing import Any, Callable, Sequence, Generator
 
 import colorama
 import rich.terminal_theme
@@ -234,12 +234,9 @@ class ArgShell(cmd.Cmd):
     ):
         if cmds:
             console.print(f"[sea_green1]{header}")
-            # self.stdout.write("%s\n" % str(header))
             if self.ruler:
                 console.print(f"[deep_pink1]{self.ruler * len(header)}")
-                # self.stdout.write("%s\n" % str(self.ruler * len(header)))
             self.columnize(cmds, maxcol - 1)
-            # self.stdout.write("\n")
 
     def columnize(self, list_: list[str] | None, displaywidth: int = 80):  # type: ignore
         """Display a list of strings as a compact set of columns.
@@ -249,7 +246,6 @@ class ArgShell(cmd.Cmd):
         """
         if not list_:
             console.print(f"[bright_red]<empty>")
-            # self.stdout.write("<empty>\n")
             return
 
         nonstrings = [i for i in range(len(list_)) if not isinstance(list_[i], str)]  # type: ignore
@@ -259,9 +255,15 @@ class ArgShell(cmd.Cmd):
             )
         size = len(list_)
         if size == 1:
-            self.stdout.write("%s\n" % str(list_[0]))
             console.print(f"[turquoise2]{list_[0]}")
             return
+
+        def get_color() -> Generator[RGB, Any, Any]:
+            colors = Gradient(["turquoise2", "pink1"]).get_sequence(size)
+            for color in colors:
+                yield color
+
+        colors = get_color()
         # Try every row count from 1 upwards
         for nrows in range(1, len(list_)):
             ncols = (size + nrows - 1) // nrows
@@ -298,8 +300,7 @@ class ArgShell(cmd.Cmd):
                 del texts[-1]
             for col in range(len(texts)):
                 texts[col] = texts[col].ljust(colwidths[col])
-
-            console.print(f"[turquoise2]{'  '.join(texts)}")
+            console.print("  ".join(f"{next(colors)}{text}" for text in texts))
 
     def cmdloop(self, intro: str | None = None):
         """Repeatedly issue a prompt, accept input, parse an initial prefix
