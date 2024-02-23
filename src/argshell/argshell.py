@@ -11,9 +11,9 @@ from typing import Any, Callable, Sequence
 
 import colorama
 import rich.terminal_theme
-from rich.console import Console
 import rich_argparse
 from printbuddies import RGB, Gradient
+from rich.console import Console
 from rich_argparse import (
     ArgumentDefaultsRichHelpFormatter,
     HelpPreviewAction,
