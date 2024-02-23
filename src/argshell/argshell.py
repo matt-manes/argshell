@@ -12,8 +12,10 @@ from typing import Any, Callable, Generator, Sequence
 import colorama
 import rich.terminal_theme
 import rich_argparse
+from pathier import Pathier
 from printbuddies import RGB, Gradient
 from rich.console import Console
+from rich.rule import Rule
 from rich_argparse import (
     ArgumentDefaultsRichHelpFormatter,
     HelpPreviewAction,
@@ -22,7 +24,7 @@ from rich_argparse import (
 )
 
 colorama.init()
-console = Console()
+argshell_console = Console(style="pink1")
 
 
 class ArgShellHelpFormatter(
@@ -31,6 +33,17 @@ class ArgShellHelpFormatter(
     ArgumentDefaultsRichHelpFormatter,
 ):
     """ """
+
+    def __init__(
+        self,
+        prog: str,
+        indent_increment: int = 2,
+        max_help_position: int = 24,
+        width: int | None = None,
+        console: Console | None = None,
+    ) -> None:
+        super().__init__(prog, indent_increment, max_help_position, width, console)
+        self._console = argshell_console
 
     def format_help(self) -> str:
         with self.console.capture() as capture:
@@ -117,7 +130,7 @@ class ArgShellParser(argparse.ArgumentParser):
             exit_on_error,
         )
 
-    def add_help_preview(self, path: str = "cli-help.svg"):
+    def add_help_preview(self, path: str = "cli_help.svg"):
         """Add a `--generate-help-preview` switch for generating an `.svg` of this parser's help command."""
         if not path.endswith((".svg", ".SVG")):
             raise ValueError(f"`{path}` is not a `.svg` file path.")
@@ -142,226 +155,29 @@ class ArgShellParser(argparse.ArgumentParser):
         return parsed_args
 
 
-class ArgShell(cmd.Cmd):
-    """Subclass this to create custom ArgShells."""
-
-    intro = "Entering argshell..."
-    prompt = "argshell>"
-
-    def do_quit(self, _: str) -> bool:
-        """Quit shell."""
-        return True
-
-    def do_sys(self, command: str):
-        """Execute command with `os.system()`."""
-        os.system(command)
-
-    def do_reload(self, _: str):
-        """Reload this shell."""
-        source_file = inspect.getsourcefile(type(self))
-        if not source_file:
-            raise FileNotFoundError(
-                "Can't reload shell, this source file could not be found (somehow...)"
-            )
-        subprocess.run([sys.executable, source_file])
-        sys.exit()
-
-    def do_help(self, arg: str):
-        """
-        List available commands with "help" or detailed help with "help cmd".
-        If using 'help cmd' and the cmd is decorated with a parser, the parser help will also be printed.
-        """
-        if arg:
-            # XXX check arg syntax
-            try:
-                func = getattr(self, "help_" + arg)
-            except AttributeError:
-                try:
-                    func = getattr(self, "do_" + arg)
-                    doc = func.__doc__
-                    if doc:
-                        lines = [line.strip() for line in doc.splitlines()]
-                        colors = Gradient().get_sequence(len(lines))
-                        doc = "\n".join(
-                            f"{color}{line}[/]"
-                            for color, line in zip(colors[::-1], lines)
-                        )
-                        console.print(f"[turquoise2]{doc}")
-                    # Check for decorator and call decorated function with "--help"
-                    if hasattr(func, "__wrapped__"):
-                        console.print(
-                            f"[pink1]Parser help for [deep_pink1]{func.__name__.replace('do_','')}"
-                        )
-                        func("--help")
-                    if doc or hasattr(func, "__wrapped__"):
-                        return
-                except AttributeError:
-                    pass
-                console.print(f"[pink1]{self.nohelp % (f'[turquoise2]arg',)}")
-                return
-            func()
-        else:
-            names = self.get_names()
-            cmds_doc: list[str] = []
-            cmds_undoc: list[str] = []
-            topics: set[str] = set()
-            for name in names:
-                if name[:5] == "help_":
-                    topics.add(name[5:])
-            names.sort()
-            # There can be duplicates if routines overridden
-            prevname = ""
-            for name in names:
-                if name[:3] == "do_":
-                    if name == prevname:
-                        continue
-                    prevname = name
-                    cmd = name[3:]
-                    if cmd in topics:
-                        cmds_doc.append(cmd)
-                        topics.remove(cmd)
-                    elif getattr(self, name).__doc__:
-                        cmds_doc.append(cmd)
-                    else:
-                        cmds_undoc.append(cmd)
-            console.print(f"[turquoise2]{self.doc_leader}")
-            self.print_topics(self.doc_header, cmds_doc, 15, 80)
-            self.print_topics(self.misc_header, sorted(topics), 15, 80)
-            self.print_topics(self.undoc_header, cmds_undoc, 15, 80)
-
-    def print_topics(
-        self, header: str, cmds: list[str] | None, cmdlen: int, maxcol: int
-    ):
-        if cmds:
-            console.print(f"[sea_green1]{header}")
-            if self.ruler:
-                console.print(f"[deep_pink1]{self.ruler * len(header)}")
-            self.columnize(cmds, maxcol - 1)
-
-    def columnize(self, list_: list[str] | None, displaywidth: int = 80):  # type: ignore
-        """Display a list of strings as a compact set of columns.
-
-        Each column is only as wide as necessary.
-        Columns are separated by two spaces (one was not legible enough).
-        """
-        if not list_:
-            console.print(f"[bright_red]<empty>")
-            return
-
-        nonstrings = [i for i in range(len(list_)) if not isinstance(list_[i], str)]  # type: ignore
-        if nonstrings:
-            raise TypeError(
-                "list[i] not a string for i in %s" % ", ".join(map(str, nonstrings))
-            )
-        size = len(list_)
-        if size == 1:
-            console.print(f"[turquoise2]{list_[0]}")
-            return
-
-        def get_color() -> Generator[RGB, Any, Any]:
-            colors = Gradient(["turquoise2", "pink1"]).get_sequence(size)
-            for color in colors:
-                yield color
-
-        colors = get_color()
-        # Try every row count from 1 upwards
-        for nrows in range(1, len(list_)):
-            ncols = (size + nrows - 1) // nrows
-            colwidths: list[int] = []
-            totwidth = -2
-            for col in range(ncols):
-                colwidth = 0
-                for row in range(nrows):
-                    i = row + nrows * col
-                    if i >= size:
-                        break
-                    x = list_[i]
-                    colwidth = max(colwidth, len(x))
-                colwidths.append(colwidth)
-                totwidth += colwidth + 2
-                if totwidth > displaywidth:
-                    break
-            if totwidth <= displaywidth:
-                break
-        else:
-            nrows = len(list_)
-            ncols = 1
-            colwidths = [0]
-        for row in range(nrows):
-            texts: list[str] = []
-            for col in range(ncols):
-                i = row + nrows * col
-                if i >= size:
-                    x = ""
-                else:
-                    x = list_[i]
-                texts.append(x)
-            while texts and not texts[-1]:
-                del texts[-1]
-            for col in range(len(texts)):
-                texts[col] = texts[col].ljust(colwidths[col])
-            console.print("  ".join(f"{next(colors)}{text}" for text in texts))
-
-    def cmdloop(self, intro: str | None = None):
-        """Repeatedly issue a prompt, accept input, parse an initial prefix
-        off the received input, and dispatch to action methods, passing them
-        the remainder of the line as argument.
-
-        """
-
-        self.preloop()
-        if self.use_rawinput and self.completekey:
-            try:
-                import readline
-
-                self.old_completer = readline.get_completer()  # type: ignore
-                readline.set_completer(self.complete)  # type: ignore
-                readline.parse_and_bind(self.completekey + ": complete")  # type: ignore
-            except ImportError:
-                pass
-        try:
-            if intro is not None:
-                self.intro = intro
-            if self.intro:
-                self.stdout.write(str(self.intro) + "\n")
-            stop = None
-            while not stop:
-                if self.cmdqueue:
-                    line = self.cmdqueue.pop(0)
-                else:
-                    if self.use_rawinput:
-                        try:
-                            line = input(self.prompt)
-                        except EOFError:
-                            line = "EOF"
-                    else:
-                        self.stdout.write(self.prompt)
-                        self.stdout.flush()
-                        line = self.stdin.readline()
-                        if not len(line):
-                            line = "EOF"
-                        else:
-                            line = line.rstrip("\r\n")
-                # ===========Modification start===========
-                try:
-                    line = self.precmd(line)
-                    stop = self.onecmd(line)
-                    stop = self.postcmd(stop, line)
-                except Exception as e:
-                    traceback.print_exc()
-                # ===========Modification stop===========
-            self.postloop()
-        finally:
-            if self.use_rawinput and self.completekey:
-                try:
-                    import readline
-
-                    readline.set_completer(self.old_completer)  # type: ignore
-                except ImportError:
-                    pass
-
-    def emptyline(self):  # type: ignore
-        ...
+def get_shell_docs_parser() -> ArgShellParser:
+    parser = ArgShellParser(
+        prog="shell_docs",
+        description="""Generate `.svg` files for this shell's command list.
+                            The font size is proportional to the terminal width when this command is executed.""",
+    )
+    parser.add_argument(
+        "path",
+        nargs="?",
+        type=str,
+        default="shell_docs.svg",
+        help=""" The base file path to save the svg to.""",
+    )
+    parser.add_argument(
+        "-i",
+        "--individual",
+        action="store_true",
+        help=""" 
+    Save each command as a separate `.svg` instead of one continuous one.
+    Each file be saved as `{base_file_stem}_{command}.svg`""",
+    )
+    parser.add_help_preview("shell_doc_help.svg")
+    return parser
 
 
 def with_parser(
@@ -443,3 +259,311 @@ def with_parser(
         return inner
 
     return decorator
+
+
+class ArgShell(cmd.Cmd):
+    """Subclass this to create custom ArgShells."""
+
+    intro = "Entering argshell..."
+    prompt = "argshell>"
+    console = argshell_console
+
+    def do_quit(self, _: str) -> bool:
+        """Quit shell."""
+        return True
+
+    def do_sys(self, command: str):
+        """Execute command with `os.system()`."""
+        os.system(command)
+
+    def do_reload(self, _: str):
+        """Reload this shell."""
+        source_file = inspect.getsourcefile(type(self))
+        if not source_file:
+            raise FileNotFoundError(
+                "Can't reload shell, this source file could not be found (somehow...)"
+            )
+        subprocess.run([sys.executable, source_file])
+        sys.exit()
+
+    def do_capture(self, arg: str):
+        """
+        Prepend any of this shell's commands with `capture` to save the execution output to `{command}.svg`.
+        (Note: Only captures output printed with this instance's `self.console.print`.)
+        e.g.
+        >>> argshell> capture help
+
+        will save the output of the `help` command to `help.svg`.
+        """
+        command = arg.split()[0].strip('"')
+        self.console.record = True
+        arg_ = arg.replace('"', "")
+        self.console.print(f"{self.prompt} {arg_}")
+        getattr(self, f"do_{command}")(" ".join(arg.split()[1:]))
+        self.console.save_svg(
+            f"{command}.svg",
+            title=f"{command}",
+            theme=rich.terminal_theme.MONOKAI,
+        )
+        self.console.record = False
+
+    def get_commands(self) -> dict[str, list[str]]:
+        """
+        Returns the following dictionary for this instance:
+          {
+              "cmds_doc": list[documented commands],
+              "topics": list[topics],
+              "cmds_undoc": list[undocumented commands]
+          }
+        """
+        names = self.get_names()
+        cmds_doc: list[str] = []
+        cmds_undoc: list[str] = []
+        topics: set[str] = set()
+        for name in names:
+            if name[:5] == "help_":
+                topics.add(name[5:])
+        names.sort()
+        # There can be duplicates if routines overridden
+        prevname = ""
+        for name in names:
+            if name[:3] == "do_":
+                if name == prevname or name == "do_shell_docs":
+                    continue
+                prevname = name
+                cmd = name[3:]
+                if cmd in topics:
+                    cmds_doc.append(cmd)
+                    topics.remove(cmd)
+                elif getattr(self, name).__doc__:
+                    cmds_doc.append(cmd)
+                else:
+                    cmds_undoc.append(cmd)
+        return {
+            "cmds_doc": cmds_doc,
+            "topics": sorted(topics),
+            "cmds_undoc": cmds_undoc,
+        }
+
+    @with_parser(get_shell_docs_parser)
+    def do_shell_docs(self, args: Namespace):
+        """Generate documentation as an `.svg` for this shell's commands."""
+        base_path = Pathier(args.path)
+        base_path.parent.mkdir()
+
+        def save(title: str):
+            self.console.save_svg(
+                str(base_path.with_stem(f"{base_path.stem}_{title}")),
+                title=title,
+                theme=rich.terminal_theme.MONOKAI,
+            )
+
+        commands = self.get_commands()
+        self.console.record = True
+        self.print_commands(commands)
+        title = self.__class__.__name__
+        if args.individual:
+            save(title)
+        all_commands: list[str] = []
+        for value in commands.values():
+            all_commands.extend(value)
+        for command in all_commands:
+            self.console.print(Rule(style="deep_pink1"))
+            self.console.print(f"[pink1]{self.prompt} {command}")
+            self.console.print()
+            self.console.print(f"[sea_green1]{title}::{command}")
+            self.do_help(command)
+            self.console.print("")
+            if args.individual:
+                save(command)
+        self.console.record = False
+        if not args.individual:
+            self.console.save_svg(
+                str(base_path), title=title, theme=rich.terminal_theme.MONOKAI
+            )
+            self.console.print(f"Documentation saved to `{base_path}`.")
+        else:
+            self.console.print(f"Documentation saved in `{base_path.parent}`.")
+
+    def print_commands(self, commands: dict[str, list[str]]):
+        """Display formatted help list for `commands`.
+        `commands` should be:
+        {
+            "cmds_doc": list[documented commands],
+            "topics": list[topics],
+            "cmds_undoc": list[undocumented commands]
+        }"""
+        self.console.print(f"[turquoise2]{self.doc_leader}")
+        self.print_topics(self.doc_header, commands["cmds_doc"], 15, 80)
+        self.print_topics(self.misc_header, commands["topics"], 15, 80)
+        self.print_topics(self.undoc_header, commands["cmds_undoc"], 15, 80)
+
+    def do_help(self, arg: str):
+        """
+        List available commands with "help" or detailed help with "help cmd".
+        If using 'help cmd' and the cmd is decorated with a parser, the parser help will also be printed.
+        """
+        if arg:
+            # XXX check arg syntax
+            try:
+                func = getattr(self, "help_" + arg)
+            except AttributeError:
+                try:
+                    func = getattr(self, "do_" + arg)
+                    doc = func.__doc__
+                    if doc:
+                        lines = [line.strip() for line in doc.splitlines()]
+                        colors = Gradient().get_sequence(len(lines))
+                        doc = "\n".join(
+                            f"{color}{line}[/]"
+                            for color, line in zip(colors[::-1], lines)
+                        )
+                        self.console.print(f"[turquoise2]{doc}")
+                    # Check for decorator and call decorated function with "--help"
+                    if hasattr(func, "__wrapped__"):
+                        self.console.print(
+                            f"[pink1]Parser help for [deep_pink1]{func.__name__.replace('do_','')}"
+                        )
+                        func("--help")
+                    if doc or hasattr(func, "__wrapped__"):
+                        return
+                except AttributeError:
+                    pass
+                self.console.print(f"[pink1]{self.nohelp % (f'[turquoise2]{arg}',)}")
+                return
+            func()
+        else:
+            commands = self.get_commands()
+            self.print_commands(commands)
+
+    def print_topics(
+        self, header: str, cmds: list[str] | None, cmdlen: int, maxcol: int
+    ):
+        if cmds:
+            self.console.print(f"[sea_green1]{header}")
+            if self.ruler:
+                self.console.print(f"[deep_pink1]{self.ruler * len(header)}")
+            self.columnize(cmds, maxcol - 1)
+
+    def columnize(self, list_: list[str] | None, displaywidth: int = 80):  # type: ignore
+        """Display a list of strings as a compact set of columns.
+
+        Each column is only as wide as necessary.
+        Columns are separated by two spaces (one was not legible enough).
+        """
+        if not list_:
+            self.console.print(f"[bright_red]<empty>")
+            return
+
+        nonstrings = [i for i in range(len(list_)) if not isinstance(list_[i], str)]  # type: ignore
+        if nonstrings:
+            raise TypeError(
+                "list[i] not a string for i in %s" % ", ".join(map(str, nonstrings))
+            )
+        size = len(list_)
+        if size == 1:
+            self.console.print(f"[turquoise2]{list_[0]}")
+            return
+
+        def get_color() -> Generator[RGB, Any, Any]:
+            colors = Gradient(["turquoise2", "pink1"]).get_sequence(size)
+            for color in colors:
+                yield color
+
+        colors = get_color()
+        # Try every row count from 1 upwards
+        for nrows in range(1, len(list_)):
+            ncols = (size + nrows - 1) // nrows
+            colwidths: list[int] = []
+            totwidth = -2
+            for col in range(ncols):
+                colwidth = 0
+                for row in range(nrows):
+                    i = row + nrows * col
+                    if i >= size:
+                        break
+                    x = list_[i]
+                    colwidth = max(colwidth, len(x))
+                colwidths.append(colwidth)
+                totwidth += colwidth + 2
+                if totwidth > displaywidth:
+                    break
+            if totwidth <= displaywidth:
+                break
+        else:
+            nrows = len(list_)
+            ncols = 1
+            colwidths = [0]
+        for row in range(nrows):
+            texts: list[str] = []
+            for col in range(ncols):
+                i = row + nrows * col
+                if i >= size:
+                    x = ""
+                else:
+                    x = list_[i]
+                texts.append(x)
+            while texts and not texts[-1]:
+                del texts[-1]
+            for col in range(len(texts)):
+                texts[col] = texts[col].ljust(colwidths[col])
+            self.console.print("  ".join(f"{next(colors)}{text}" for text in texts))
+
+    def cmdloop(self, intro: str | None = None):
+        """Repeatedly issue a prompt, accept input, parse an initial prefix
+        off the received input, and dispatch to action methods, passing them
+        the remainder of the line as argument."""
+
+        self.preloop()
+        if self.use_rawinput and self.completekey:
+            try:
+                import readline
+
+                self.old_completer = readline.get_completer()  # type: ignore
+                readline.set_completer(self.complete)  # type: ignore
+                readline.parse_and_bind(self.completekey + ": complete")  # type: ignore
+            except ImportError:
+                pass
+        try:
+            if intro is not None:
+                self.intro = intro
+            if self.intro:
+                self.console.print(f"[turquoise2]{self.intro}\n")
+            stop = None
+            while not stop:
+                if self.cmdqueue:
+                    line = self.cmdqueue.pop(0)
+                else:
+                    if self.use_rawinput:
+                        try:
+                            line = self.console.input(f"[deep_pink1]{self.prompt}")
+                        except EOFError:
+                            line = "EOF"
+                    else:
+                        self.console.print(f"[deep_pink1]{self.prompt}")
+                        self.stdout.flush()
+                        line = self.stdin.readline()
+                        if not len(line):
+                            line = "EOF"
+                        else:
+                            line = line.rstrip("\r\n")
+                # ===========Modification start===========
+                try:
+                    line = self.precmd(line)
+                    stop = self.onecmd(line)
+                    stop = self.postcmd(stop, line)
+                except Exception as e:
+                    traceback.print_exc()
+                # ===========Modification stop===========
+            self.postloop()
+        finally:
+            if self.use_rawinput and self.completekey:
+                try:
+                    import readline
+
+                    readline.set_completer(self.old_completer)  # type: ignore
+                except ImportError:
+                    pass
+
+    def emptyline(self):  # type: ignore
+        ...
