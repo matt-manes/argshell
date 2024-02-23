@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.5.1 (2024-02-22)
+
+#### Refactorings
+
+* use gradient when displaying command list
+
+
 ## v1.5.0 (2024-02-22)
 
 #### New Features
