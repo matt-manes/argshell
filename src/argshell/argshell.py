@@ -7,7 +7,51 @@ import subprocess
 import sys
 import traceback
 from functools import wraps
-from typing import Any, Callable
+from typing import Any, Callable, Sequence
+
+import colorama
+import rich.terminal_theme
+from rich.console import Console
+import rich_argparse
+from printbuddies import RGB, Gradient
+from rich_argparse import (
+    ArgumentDefaultsRichHelpFormatter,
+    HelpPreviewAction,
+    MetavarTypeRichHelpFormatter,
+    RawDescriptionRichHelpFormatter,
+)
+
+colorama.init()
+console = Console()
+
+
+class ArgShellHelpFormatter(
+    RawDescriptionRichHelpFormatter,
+    MetavarTypeRichHelpFormatter,
+    ArgumentDefaultsRichHelpFormatter,
+):
+    """ """
+
+    def format_help(self) -> str:
+        with self.console.capture() as capture:
+            self.console.print(
+                self,
+                crop=False,
+                style="turquoise2",
+            )
+        return rich_argparse._fix_legacy_win_text(self.console, capture.get())  # type: ignore
+
+
+ArgShellHelpFormatter.styles |= {
+    "argparse.args": "deep_pink1",
+    "argparse.groups": "sea_green1",
+    "argparse.help": "pink1",
+    "argparse.text": "turquoise2",
+    "argparse.prog": (RGB(name="sea_green2") - RGB(50, 0, 50)).as_style(),
+    "argparse.metavar": (RGB(name="turquoise2") * 0.7).as_style(),
+    "argparse.syntax": "orchid1",
+    "argparse.default": "cornflower_blue",
+}
 
 
 class Namespace(argparse.Namespace):
@@ -40,6 +84,50 @@ class ArgShellParser(argparse.ArgumentParser):
         - exit_on_error -- Determines whether or not ArgumentParser exits with
             error info when an error occurs
     """
+
+    def __init__(
+        self,
+        prog: str | None = None,
+        usage: str | None = None,
+        description: str | None = None,
+        epilog: str | None = None,
+        parents: Sequence[argparse.ArgumentParser] = [],
+        formatter_class: argparse.HelpFormatter = ArgShellHelpFormatter,  # type: ignore
+        prefix_chars: str = "-",
+        fromfile_prefix_chars: str | None = None,
+        argument_default: Any = None,
+        conflict_handler: str = "error",
+        add_help: bool = True,
+        allow_abbrev: bool = True,
+        exit_on_error: bool = True,
+    ) -> None:
+        super().__init__(
+            prog,
+            usage,
+            description,
+            epilog,
+            parents,
+            formatter_class,  # type: ignore
+            prefix_chars,
+            fromfile_prefix_chars,
+            argument_default,
+            conflict_handler,
+            add_help,
+            allow_abbrev,
+            exit_on_error,
+        )
+
+    def add_help_preview(self, path: str = "cli-help.svg"):
+        """Add a `--generate-help-preview` switch for generating an `.svg` of this parser's help command."""
+        if not path.endswith((".svg", ".SVG")):
+            raise ValueError(f"`{path}` is not a `.svg` file path.")
+
+        self.add_argument(
+            "--generate-help-preview",
+            action=HelpPreviewAction,
+            path=path,
+            export_kwds={"theme": rich.terminal_theme.MONOKAI},
+        )
 
     def exit(self, status: int = 0, message: str | None = None):  # type: ignore
         """Override to prevent shell exit when passing -h/--help switches."""
@@ -79,7 +167,8 @@ class ArgShell(cmd.Cmd):
         sys.exit()
 
     def do_help(self, arg: str):
-        """List available commands with "help" or detailed help with "help cmd".
+        """
+        List available commands with "help" or detailed help with "help cmd".
         If using 'help cmd' and the cmd is decorated with a parser, the parser help will also be printed.
         """
         if arg:
@@ -91,20 +180,24 @@ class ArgShell(cmd.Cmd):
                     func = getattr(self, "do_" + arg)
                     doc = func.__doc__
                     if doc:
-                        self.stdout.write("%s\n" % str(doc))
-                    # =========================Modification start=========================
+                        lines = [line.strip() for line in doc.splitlines()]
+                        colors = Gradient().get_sequence(len(lines))
+                        doc = "\n".join(
+                            f"{color}{line}[/]"
+                            for color, line in zip(colors[::-1], lines)
+                        )
+                        console.print(f"[turquoise2]{doc}")
                     # Check for decorator and call decorated function with "--help"
                     if hasattr(func, "__wrapped__"):
-                        self.stdout.write(
-                            f"Parser help for {func.__name__.replace('do_','')}:\n"
+                        console.print(
+                            f"[pink1]Parser help for [deep_pink1]{func.__name__.replace('do_','')}"
                         )
                         func("--help")
                     if doc or hasattr(func, "__wrapped__"):
                         return
-                    # =========================Modification stop=========================
                 except AttributeError:
                     pass
-                self.stdout.write("%s\n" % str(self.nohelp % (arg,)))
+                console.print(f"[pink1]{self.nohelp % (f'[turquoise2]arg',)}")
                 return
             func()
         else:
@@ -131,10 +224,82 @@ class ArgShell(cmd.Cmd):
                         cmds_doc.append(cmd)
                     else:
                         cmds_undoc.append(cmd)
-            self.stdout.write("%s\n" % str(self.doc_leader))
+            console.print(f"[turquoise2]{self.doc_leader}")
             self.print_topics(self.doc_header, cmds_doc, 15, 80)
             self.print_topics(self.misc_header, sorted(topics), 15, 80)
             self.print_topics(self.undoc_header, cmds_undoc, 15, 80)
+
+    def print_topics(
+        self, header: str, cmds: list[str] | None, cmdlen: int, maxcol: int
+    ):
+        if cmds:
+            console.print(f"[sea_green1]{header}")
+            # self.stdout.write("%s\n" % str(header))
+            if self.ruler:
+                console.print(f"[deep_pink1]{self.ruler * len(header)}")
+                # self.stdout.write("%s\n" % str(self.ruler * len(header)))
+            self.columnize(cmds, maxcol - 1)
+            # self.stdout.write("\n")
+
+    def columnize(self, list_: list[str] | None, displaywidth: int = 80):  # type: ignore
+        """Display a list of strings as a compact set of columns.
+
+        Each column is only as wide as necessary.
+        Columns are separated by two spaces (one was not legible enough).
+        """
+        if not list_:
+            console.print(f"[bright_red]<empty>")
+            # self.stdout.write("<empty>\n")
+            return
+
+        nonstrings = [i for i in range(len(list_)) if not isinstance(list_[i], str)]  # type: ignore
+        if nonstrings:
+            raise TypeError(
+                "list[i] not a string for i in %s" % ", ".join(map(str, nonstrings))
+            )
+        size = len(list_)
+        if size == 1:
+            self.stdout.write("%s\n" % str(list_[0]))
+            console.print(f"[turquoise2]{list_[0]}")
+            return
+        # Try every row count from 1 upwards
+        for nrows in range(1, len(list_)):
+            ncols = (size + nrows - 1) // nrows
+            colwidths: list[int] = []
+            totwidth = -2
+            for col in range(ncols):
+                colwidth = 0
+                for row in range(nrows):
+                    i = row + nrows * col
+                    if i >= size:
+                        break
+                    x = list_[i]
+                    colwidth = max(colwidth, len(x))
+                colwidths.append(colwidth)
+                totwidth += colwidth + 2
+                if totwidth > displaywidth:
+                    break
+            if totwidth <= displaywidth:
+                break
+        else:
+            nrows = len(list_)
+            ncols = 1
+            colwidths = [0]
+        for row in range(nrows):
+            texts: list[str] = []
+            for col in range(ncols):
+                i = row + nrows * col
+                if i >= size:
+                    x = ""
+                else:
+                    x = list_[i]
+                texts.append(x)
+            while texts and not texts[-1]:
+                del texts[-1]
+            for col in range(len(texts)):
+                texts[col] = texts[col].ljust(colwidths[col])
+
+            console.print(f"[turquoise2]{'  '.join(texts)}")
 
     def cmdloop(self, intro: str | None = None):
         """Repeatedly issue a prompt, accept input, parse an initial prefix
