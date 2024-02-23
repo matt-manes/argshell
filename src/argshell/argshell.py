@@ -158,74 +158,7 @@ class ArgumentParser(argparse.ArgumentParser):
         return namespace, args
 
 
-class ArgShellParser(argparse.ArgumentParser):
-    """***Overrides exit, error, and parse_args methods***
-
-    Object for parsing command line strings into Python objects.
-
-    Keyword Arguments:
-        - prog -- The name of the program (default:
-            ``os.path.basename(sys.argv[0])``)
-        - usage -- A usage message (default: auto-generated from arguments)
-        - description -- A description of what the program does
-        - epilog -- Text following the argument descriptions
-        - parents -- Parsers whose arguments should be copied into this one
-        - formatter_class -- HelpFormatter class for printing help messages
-        - prefix_chars -- Characters that prefix optional arguments
-        - fromfile_prefix_chars -- Characters that prefix files containing
-            additional arguments
-        - argument_default -- The default value for all arguments
-        - conflict_handler -- String indicating how to handle conflicts
-        - add_help -- Add a -h/-help option
-        - allow_abbrev -- Allow long options to be abbreviated unambiguously
-        - exit_on_error -- Determines whether or not ArgumentParser exits with
-            error info when an error occurs
-    """
-
-    def __init__(
-        self,
-        prog: str | None = None,
-        usage: str | None = None,
-        description: str | None = None,
-        epilog: str | None = None,
-        parents: Sequence[argparse.ArgumentParser] = [],
-        formatter_class: argparse.HelpFormatter = ArgShellHelpFormatter,  # type: ignore
-        prefix_chars: str = "-",
-        fromfile_prefix_chars: str | None = None,
-        argument_default: Any = None,
-        conflict_handler: str = "error",
-        add_help: bool = True,
-        allow_abbrev: bool = True,
-        exit_on_error: bool = True,
-    ) -> None:
-        super().__init__(
-            prog,
-            usage,
-            description,
-            epilog,
-            parents,
-            formatter_class,  # type: ignore
-            prefix_chars,
-            fromfile_prefix_chars,
-            argument_default,
-            conflict_handler,
-            add_help,
-            allow_abbrev,
-            exit_on_error,
-        )
-
-    def add_help_preview(self, path: str = "cli_help.svg"):
-        """Add a `--generate-help-preview` switch for generating an `.svg` of this parser's help command."""
-        if not path.endswith((".svg", ".SVG")):
-            raise ValueError(f"`{path}` is not a `.svg` file path.")
-
-        self.add_argument(
-            "--generate-help-preview",
-            action=HelpPreviewAction,
-            path=path,
-            export_kwds={"theme": rich.terminal_theme.MONOKAI},
-        )
-
+class ArgShellParser(ArgumentParser):
     def exit(self, status: int = 0, message: str | None = None):  # type: ignore
         """Override to prevent shell exit when passing -h/--help switches."""
         if message:
@@ -233,10 +166,6 @@ class ArgShellParser(argparse.ArgumentParser):
 
     def error(self, message: str):
         raise Exception(f"prog: {self.prog}, message: {message}")
-
-    def parse_args(self, *args: Any, **kwargs: Any) -> Namespace:
-        parsed_args: Namespace = super().parse_args(*args, **kwargs)
-        return parsed_args
 
 
 def get_shell_docs_parser() -> ArgShellParser:
