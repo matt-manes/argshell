@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.5.0 (2024-02-22)
+
+#### New Features
+
+* implement `rich` based help formatter
+#### Others
+
+* move type ignore comment after formatting goofed it up
+
+
 ## v1.4.1 (2024-02-16)
 
 #### Refactorings
