@@ -7,7 +7,7 @@ import subprocess
 import sys
 import traceback
 from functools import wraps
-from typing import Any, Callable, Sequence, Generator
+from typing import Any, Callable, Generator, Sequence
 
 import colorama
 import rich.terminal_theme
