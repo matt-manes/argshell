@@ -12,6 +12,7 @@ from typing import Any, Callable, Generator, Sequence
 import colorama
 import rich.terminal_theme
 import rich_argparse
+from rich.theme import Theme
 from pathier import Pathier
 from printbuddies import RGB, Gradient
 from rich.console import Console
@@ -25,6 +26,7 @@ from rich_argparse import (
 
 colorama.init()
 argshell_console = Console(style="pink1")
+_sys = sys
 
 
 class ArgShellHelpFormatter(
@@ -66,12 +68,94 @@ ArgShellHelpFormatter.styles |= {
     "argparse.default": "cornflower_blue",
 }
 
+Namespace = argparse.Namespace
 
-class Namespace(argparse.Namespace):
-    """Simple object for storing attributes.
 
-    Implements equality by attribute names and values, and provides a simple string representation.
-    """
+class ArgumentParser(argparse.ArgumentParser):
+    def __init__(
+        self,
+        prog: str | None = None,
+        usage: str | None = None,
+        description: str | None = None,
+        epilog: str | None = None,
+        parents: Sequence[argparse.ArgumentParser] = [],
+        formatter_class: argparse.HelpFormatter = ArgShellHelpFormatter,  # type: ignore
+        prefix_chars: str = "-",
+        fromfile_prefix_chars: str | None = None,
+        argument_default: Any = None,
+        conflict_handler: str = "error",
+        add_help: bool = True,
+        allow_abbrev: bool = True,
+        exit_on_error: bool = True,
+    ) -> None:
+        super().__init__(
+            prog,
+            usage,
+            description,
+            epilog,
+            parents,
+            formatter_class,  # type: ignore
+            prefix_chars,
+            fromfile_prefix_chars,
+            argument_default,
+            conflict_handler,
+            add_help,
+            allow_abbrev,
+            exit_on_error,
+        )
+
+    def add_help_preview(self, path: str = "cli_help.svg"):
+        """Add a `--generate-help-preview` switch for generating an `.svg` of this parser's help command."""
+        if not path.endswith((".svg", ".SVG")):
+            raise ValueError(f"`{path}` is not a `.svg` file path.")
+
+        self.add_argument(
+            "--generate-help-preview",
+            action=HelpPreviewAction,
+            path=path,
+            export_kwds={"theme": rich.terminal_theme.MONOKAI},
+        )
+
+    def parse_known_args(  # type:ignore
+        self, args: Sequence[str] | None = None, namespace: Namespace | None = None
+    ) -> tuple[Namespace, list[str]]:
+        if args is None:
+            # args default to the system args
+            args = _sys.argv[1:]
+        else:
+            # make sure that args are mutable
+            args = list(args)
+
+        # default Namespace built from parser defaults
+        if namespace is None:
+            namespace = Namespace()
+
+        # add any action defaults that aren't present
+        for action in self._actions:
+            if action.dest is not argparse.SUPPRESS:
+                if not hasattr(namespace, action.dest):
+                    if action.default is not argparse.SUPPRESS:
+                        setattr(namespace, action.dest, action.default)
+
+        # add any parser defaults that aren't present
+        for dest in self._defaults:
+            if not hasattr(namespace, dest):
+                setattr(namespace, dest, self._defaults[dest])
+
+        # parse the arguments and exit if there are any errors
+        if self.exit_on_error:  # type:ignore
+            try:
+                namespace, args = self._parse_known_args(args, namespace)
+            except argparse.ArgumentError as err:
+                if "-h" not in args or "--help" not in args:
+                    self.error(str(err))
+        else:
+            namespace, args = self._parse_known_args(args, namespace)
+
+        if hasattr(namespace, argparse._UNRECOGNIZED_ARGS_ATTR):  # type: ignore
+            args.extend(getattr(namespace, argparse._UNRECOGNIZED_ARGS_ATTR))  # type: ignore
+            delattr(namespace, argparse._UNRECOGNIZED_ARGS_ATTR)  # type: ignore
+        return namespace, args
 
 
 class ArgShellParser(argparse.ArgumentParser):
