@@ -12,11 +12,11 @@ from typing import Any, Callable, Generator, Sequence
 import colorama
 import rich.terminal_theme
 import rich_argparse
-from rich.theme import Theme
 from pathier import Pathier
 from printbuddies import RGB, Gradient
 from rich.console import Console
 from rich.rule import Rule
+from rich.theme import Theme
 from rich_argparse import (
     ArgumentDefaultsRichHelpFormatter,
     HelpPreviewAction,
@@ -311,7 +311,7 @@ class ArgShell(cmd.Cmd):
         command = arg.split()[0].strip('"')
         self.console.record = True
         arg_ = arg.replace('"', "")
-        self.console.print(f"{self.prompt} {arg_}")
+        self.console.print(f"{self.prompt}{arg_}")
         getattr(self, f"do_{command}")(" ".join(arg.split()[1:]))
         self.console.save_svg(
             f"{command}.svg",
@@ -382,7 +382,7 @@ class ArgShell(cmd.Cmd):
             all_commands.extend(value)
         for command in all_commands:
             self.console.print(Rule(style="deep_pink1"))
-            self.console.print(f"[pink1]{self.prompt} {command}")
+            self.console.print(f"[pink1]{self.prompt}{command}")
             self.console.print()
             self.console.print(f"[sea_green1]{title}::{command}")
             self.do_help(command)
@@ -521,6 +521,7 @@ class ArgShell(cmd.Cmd):
             for col in range(len(texts)):
                 texts[col] = texts[col].ljust(colwidths[col])
             self.console.print("  ".join(f"{next(colors)}{text}" for text in texts))
+        self.console.print()
 
     def cmdloop(self, intro: str | None = None):
         """Repeatedly issue a prompt, accept input, parse an initial prefix
