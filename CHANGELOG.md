@@ -1,5 +1,21 @@
 # Changelog
 
+## v1.6.0 (2024-02-23)
+
+#### New Features
+
+* implement command documentation generation
+#### Fixes
+
+* prevent missing required args message when using `-h/--help`
+#### Refactorings
+
+* change `ArgshellParser` inheritance
+#### Docs
+
+* rewrite readme
+
+
 ## v1.5.1 (2024-02-22)
 
 #### Refactorings
