@@ -1,0 +1,23 @@
+import argshell
+
+
+def get_num_parser() -> argshell.ArgShellParser:
+    parser = argshell.ArgShellParser()
+    parser.add_argument("x", type=float, default=None, help=""" The first number.""")
+    parser.add_argument("y", type=float, default=None, help=""" The second number.""")
+    return parser
+
+
+class MyShell(argshell.ArgShell):
+    def do_echo(self, text: str):
+        """Print command"""
+        self.console.print(text)
+
+
+def main():
+    """ """
+    MyShell().cmdloop()
+
+
+if __name__ == "__main__":
+    main()

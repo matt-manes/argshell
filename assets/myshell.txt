@@ -1,0 +1,16 @@
+import argshell
+
+
+class MyShell(argshell.ArgShell):
+    def do_echo(self, text: str):
+        """Print command"""
+        self.console.print(text)
+
+
+def main():
+    """ """
+    MyShell().cmdloop()
+
+
+if __name__ == "__main__":
+    main()

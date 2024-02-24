@@ -1,0 +1,53 @@
+import argshell
+
+
+def get_num_parser() -> argshell.ArgShellParser:
+    parser = argshell.ArgShellParser()
+    parser.add_argument("x", type=float, default=None, help=""" The first number.""")
+    parser.add_argument("y", type=float, default=None, help=""" The second number.""")
+    return parser
+
+
+def invert_numbers(args: argshell.Namespace) -> argshell.Namespace:
+    args.x *= -1
+    args.y *= -1
+    return args
+
+
+def double_numbers(args: argshell.Namespace) -> argshell.Namespace:
+    args.x *= 2
+    args.y *= 2
+    return args
+
+
+class MyShell(argshell.ArgShell):
+    def do_echo(self, text: str):
+        """Print command"""
+        self.console.print(text)
+
+    def print_add(self, args: argshell.Namespace):
+        self.console.print(str(args.x + args.y))
+
+    @argshell.with_parser(get_num_parser)
+    def do_add(self, args: argshell.Namespace):
+        """Add two numbers."""
+        self.print_add(args)
+
+    @argshell.with_parser(get_num_parser, [invert_numbers])
+    def do_invert_add(self, args: argshell.Namespace):
+        """Multiply two numbers by `-1` then add them."""
+        self.print_add(args)
+
+    @argshell.with_parser(get_num_parser, [double_numbers, invert_numbers])
+    def do_invert_double_add(self, args: argshell.Namespace):
+        """Multiply two numbers by `-2` then add them."""
+        self.print_add(args)
+        
+
+def main():
+    """ """
+    MyShell().cmdloop()
+
+
+if __name__ == "__main__":
+    main()
