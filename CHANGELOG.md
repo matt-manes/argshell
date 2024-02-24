@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.6.1 (2024-02-24)
+
+#### Others
+
+* add 'assets' to sdist excludes
+
+
 ## v1.6.0 (2024-02-23)
 
 #### New Features
