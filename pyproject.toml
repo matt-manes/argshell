@@ -1,8 +1,8 @@
 [project]
 name = "argshell"
 description = "Integrates the argparse and cmd modules."
-version = "1.5.1"
-dependencies = ["colorama", "printbuddies", "rich", "rich-argparse"]
+version = "1.6.0"
+dependencies = ["colorama", "printbuddies", "rich", "rich-argparse", "pathier"]
 readme = "README.md"
 keywords = ["argparse", "cmd", "shell", "commandline", "terminal"]
 classifiers = ["Programming Language :: Python :: 3", "License :: OSI Approved :: MIT License", "Operating System :: OS Independent"]
