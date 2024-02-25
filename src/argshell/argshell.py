@@ -194,7 +194,7 @@ def get_shell_docs_parser() -> ArgShellParser:
 
 
 def with_parser(
-    parser: Callable[..., ArgShellParser],
+    get_parser: Callable[..., ArgShellParser],
     post_parsers: list[Callable[[Namespace], Namespace]] = [],
 ) -> Callable[[Callable[[Any, Namespace], Any]], Callable[[Any, str], Any]]:
     """Decorate a 'do_*' function in an argshell.ArgShell class with this function to pass an argshell.Namespace object to the decorated function instead of a string.
@@ -249,15 +249,20 @@ def with_parser(
     ) -> Callable[[Any, str], Any]:
         @wraps(func)
         def inner(self: Any, command: str) -> Any:
+            parser = get_parser()
+            # Change parser prog name to name of the function it's decorating.
+            # This way the help output matches the command name.
+            func_name = func.__name__.removeprefix("do_")
+            parser.prog = func_name
             try:
-                args = parser().parse_args(shlex.split(command))
+                args = parser.parse_args(shlex.split(command))
             except Exception as e:
                 # On parser error, print help and skip post_parser and func execution
                 if "the following arguments are required" not in str(e):
-                    print(f"ERROR: {e}")
+                    argshell_console.print(f"ERROR: {e}")
                 if "-h" not in command and "--help" not in command:
                     try:
-                        args = parser().parse_args(["--help"])
+                        args = parser.parse_args(["--help"])
                     except Exception as e:
                         pass
                 return None
