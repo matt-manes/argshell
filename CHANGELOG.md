@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.6.2 (2024-02-24)
+
+#### Performance improvements
+
+* when passing a parser to `with_parser`, the `prog` attribute will be set to the name of the decorated function
+#### Docs
+
+* increase font size of svgs
+
+
 ## v1.6.1 (2024-02-24)
 
 #### Others
