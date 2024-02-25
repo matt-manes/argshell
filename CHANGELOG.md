@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.6.3 (2024-02-24)
+
+#### Fixes
+
+* fix shell_docs parser description formatting
+
+
 ## v1.6.2 (2024-02-24)
 
 #### Performance improvements
