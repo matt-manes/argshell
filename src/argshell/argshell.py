@@ -171,8 +171,9 @@ class ArgShellParser(ArgumentParser):
 def get_shell_docs_parser() -> ArgShellParser:
     parser = ArgShellParser(
         prog="shell_docs",
-        description="""Generate `.svg` files for this shell's command list.
-                            The font size is proportional to the terminal width when this command is executed.""",
+        description="""
+Generate `.svg` files for this shell's command list.
+The font size is proportional to the terminal width when this command is executed.""",
     )
     parser.add_argument(
         "path",
