@@ -21,6 +21,9 @@ def double_numbers(args: argshell.Namespace) -> argshell.Namespace:
 
 
 class MyShell(argshell.ArgShell):
+
+    prompt = "myshell>"
+    
     def do_echo(self, text: str):
         """Print command"""
         self.console.print(text)

@@ -52,7 +52,8 @@ print the help message of the parser that decorates it, if it is decorated.
 ---
 
 The `capture` command can be used to save an svg of another command's output by prepending to a command.  
-(NOTE: This only works for output printed with `ArgShell`'s `console` member mentioned earlier.)
+(NOTE: This only works for output printed with `ArgShell`'s `console` member mentioned earlier.)  
+The font size is proportional to your terminal width when using the command and any text your terminal wraps will be truncated in the svg.  
 The following would create a file called `add.svg` in your current directory:
 ![](assets/capture.svg)
 The saved svg:
