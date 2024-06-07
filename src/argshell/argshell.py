@@ -268,7 +268,7 @@ def with_parser(
                         pass
                 return None
             # Don't execute function, only print parser help
-            if "-h" in command or "--help" in command:
+            if " -h" in command or " --help" in command:
                 return None
             for post_parser in post_parsers:
                 args = post_parser(args)
