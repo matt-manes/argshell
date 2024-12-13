@@ -255,20 +255,21 @@ def with_parser(
             # This way the help output matches the command name.
             func_name = func.__name__.removeprefix("do_")
             parser.prog = func_name
+            arglist = shlex.split(command)
             try:
-                args = parser.parse_args(shlex.split(command))
+                args = parser.parse_args(arglist)
             except Exception as e:
                 # On parser error, print help and skip post_parser and func execution
                 if "the following arguments are required" not in str(e):
                     argshell_console.print(f"ERROR: {e}")
-                if "-h" not in command and "--help" not in command:
+                if "-h" not in arglist and "--help" not in arglist:
                     try:
                         args = parser.parse_args(["--help"])
                     except Exception as e:
                         pass
                 return None
             # Don't execute function, only print parser help
-            if " -h" in command or " --help" in command:
+            if "-h" in arglist or "--help" in arglist:
                 return None
             for post_parser in post_parsers:
                 args = post_parser(args)
