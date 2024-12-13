@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.6.5 (2024-12-13)
+
+#### Fixes
+
+* fix some commands firing after printing help
+
 ## v1.6.4 (2024-06-06)
 
 #### Fixes
