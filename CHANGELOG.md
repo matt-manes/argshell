@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.6.6 (2025-06-26)
+
+#### Others
+
+* make compatible with current versions of rich and rich_argparse
+
 ## v1.6.5 (2024-12-13)
 
 #### Fixes
