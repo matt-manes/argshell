@@ -11,17 +11,16 @@ from typing import Any, Callable, Generator, Sequence
 
 import colorama
 import rich.terminal_theme
-import rich_argparse
 from pathier import Pathier
 from printbuddies import RGB, Gradient
 from rich.console import Console
 from rich.rule import Rule
-from rich.theme import Theme
 from rich_argparse import (
     ArgumentDefaultsRichHelpFormatter,
     HelpPreviewAction,
     MetavarTypeRichHelpFormatter,
     RawDescriptionRichHelpFormatter,
+    _common,
 )
 
 colorama.init()
@@ -44,7 +43,9 @@ class ArgShellHelpFormatter(
         width: int | None = None,
         console: Console | None = None,
     ) -> None:
-        super().__init__(prog, indent_increment, max_help_position, width, console)
+        super().__init__(
+            prog, indent_increment, max_help_position, width, console=console
+        )
         self._console = argshell_console
 
     def format_help(self) -> str:
@@ -54,7 +55,7 @@ class ArgShellHelpFormatter(
                 crop=False,
                 style="turquoise2",
             )
-        return rich_argparse._fix_legacy_win_text(self.console, capture.get())  # type: ignore
+        return _common._fix_legacy_win_text(self.console, capture.get())  # type: ignore
 
 
 ArgShellHelpFormatter.styles |= {
@@ -246,7 +247,7 @@ def with_parser(
     >>> N M"""
 
     def decorator(
-        func: Callable[[Any, Namespace], Any | None]
+        func: Callable[[Any, Namespace], Any | None],
     ) -> Callable[[Any, str], Any]:
         @wraps(func)
         def inner(self: Any, command: str) -> Any:
